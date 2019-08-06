@@ -10,7 +10,8 @@
 /lwar$
 /lwasm$
 /lwcc/lwcc$
-/lwcc/lwcpp$
+/lwcc/lwcc-cpp$
+/lwcc/lwcc-cc
 
 # for windows
 \.suo$
