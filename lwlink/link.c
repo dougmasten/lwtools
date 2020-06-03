@@ -209,7 +209,7 @@ void resolve_sections(void)
 			laddr = linkscript.lines[ln].loadat;
 			growdown = linkscript.lines[ln].growsdown;
 		}
-		fprintf(stderr, "Adding section %s\n", linkscript.lines[ln].sectname);
+		//fprintf(stderr, "Adding section %s\n", linkscript.lines[ln].sectname);
 		add_matching_sections(linkscript.lines[ln].sectname, linkscript.lines[ln].yesflags, linkscript.lines[ln].noflags, &laddr, growdown);
 		
 		if (linkscript.lines[ln].sectname)
