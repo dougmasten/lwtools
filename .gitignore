@@ -1,0 +1,12 @@
+# ignore build files
+*.d
+*.o
+
+# ignore compiled files
+lwar/lwar
+lwasm/lwasm
+lwcc/lwcc
+lwcc/lwcc-cc
+lwcc/lwcc-cpp
+lwlink/lwlink
+lwlink/lwobjdump
