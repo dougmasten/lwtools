@@ -369,7 +369,7 @@ static int cstringlen(asmstate_t *as, line_t *ln, char **p, char delim)
 						wch = **p - 0x30;
 						if (wch > 9)
 							wch -= 7;
-						if (wch > 9)
+						if (wch > 15)
 							wch -= 32;
 						(*p)++;
 					}
@@ -379,7 +379,7 @@ static int cstringlen(asmstate_t *as, line_t *ln, char **p, char delim)
 						i = **p - 0x30;
 						if (i > 9)
 							i -= 7;
-						if (i > 9)
+						if (i > 15)
 							i -= 32;
 						wch = wch * 16 + i;
 					}
