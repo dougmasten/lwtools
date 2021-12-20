@@ -1583,6 +1583,41 @@ PARSEFUNC(pseudo_parse_include)
 	lw_free(fn);
 }
 
+PARSEFUNC(pseudo_parse_includestr)
+{
+	char *str;
+	char buf[110];
+
+	l -> len = 0;
+
+	if (!**p)
+	{
+		// no operand - include nothing
+		return;
+	}
+
+	str = lwasm_parse_general_string(l, p);
+	if (!str)
+	{
+		// string parsing failed
+		return;
+	}
+	if (*str == '\0')
+	{
+		// empty string; don't do anything
+		lw_free(str);
+		return;
+	}
+
+	/* add a book-keeping entry for line numbers */
+	snprintf(buf, 100, "\001\001SETLINENO %d\n", l -> lineno + 1);
+	input_openstring(as, "INTERNAL", buf);
+
+	/* add the constructed string to the input */
+	input_openstring(as, "INCLUDESTR", str);
+	lw_free(str);
+}
+
 PARSEFUNC(pseudo_parse_align)
 {
 	lw_expr_t e;
