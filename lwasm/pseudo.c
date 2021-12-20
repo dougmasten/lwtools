@@ -1839,8 +1839,10 @@ char *strcond_parsearg(char **p)
 		
 		if (tstr[i])
 			i++;
+		if (tstr[i] == ',')
+			i++;
 		
-		*p += i;
+		*p += i + 1;
 		return arg;
 	}
 	else if (*tstr == '\'')
@@ -1856,8 +1858,9 @@ char *strcond_parsearg(char **p)
 		
 		if (tstr[i])
 			i++;
-		
-		*p += i;
+		if (tstr[i] == ',')
+			i++;
+		*p += i + 1;
 		return arg;
 	}
 	else
@@ -1887,7 +1890,7 @@ int strcond_eq(char **p)
 		
 	arg1 = strcond_parsearg(p);
 	arg2 = strcond_parsearg(p);
-	
+
 	if (strcmp(arg1, arg2) == 0)
 		c = 1;
 	lw_free(arg1);
