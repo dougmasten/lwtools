@@ -430,7 +430,7 @@ void do_pass1(asmstate_t *as)
 				debug_message(as, 50, "Register symbol %s: %s", cl -> sym, lw_expr_print(cl -> addr));
 	
 				// register symbol at line address
-				if (instab[cl -> insn].flags & lwasm_insn_setdata)
+				if ((cl -> insn >= 0) && (instab[cl -> insn].flags & lwasm_insn_setdata))
 				{
 					if (!register_symbol(as, cl, cl -> sym, cl -> daddr, symbol_flag_none))
 					{
