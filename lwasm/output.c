@@ -252,7 +252,7 @@ void write_code_raw(asmstate_t *as, FILE *of)
 	
 	for (cl = as -> line_head; cl; cl = cl -> next)
 	{
-		if (cl -> len > 0 && cl -> outputl == 0)
+		if (cl -> len > 0 && cl -> outputl < 0)
 		{
 			int i;
 			for (i = 0; i < cl -> len; i++)
