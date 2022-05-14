@@ -493,7 +493,7 @@ void setup_script()
 			
 			lw_free(linkscript.execsym);
 			
-			eaddr = strtol(entrysym, &ptr2, 0);
+			eaddr = strtol(entrysym, &ptr2, 16);
 			if (*ptr2)
 			{
 				linkscript.execaddr = -1;
