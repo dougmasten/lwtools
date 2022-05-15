@@ -32,6 +32,7 @@ Contains the code for actually outputting the assembled code
 #include <lw_expr.h>
 
 #include "lwasm.h"
+#include "instab.h"
 
 void write_code_raw(asmstate_t *as, FILE *of);
 void write_code_decb(asmstate_t *as, FILE *of);
@@ -245,12 +246,24 @@ void write_code_rawrel(asmstate_t *as, FILE *of)
 raw merely writes all the bytes directly to the file as is. ORG is just a
 reference for the assembler to handle absolute references. Multiple ORG
 statements will produce mostly useless results
+
+However, if a run of RMBs exists at the start that is ended by an ORG
+statement, that run of RMBs will not be output as a zero fill.
 */
 void write_code_raw(asmstate_t *as, FILE *of)
 {
 	line_t *cl;
+	line_t *sl;
 	
-	for (cl = as -> line_head; cl; cl = cl -> next)
+	sl = as -> line_head;
+	for (cl = sl; cl; cl = cl -> next)
+	{
+		if (cl -> outputl > 0)
+			break;
+		if (instab[cl -> insn].flags & lwasm_insn_org)
+			sl = cl;
+	}
+	for (cl = sl; cl; cl = cl -> next)
 	{
 		if (cl -> len > 0 && cl -> outputl < 0)
 		{
