@@ -121,7 +121,10 @@ void do_output(asmstate_t *as)
 
 int write_code_BASIC_fprintf(FILE *of, int linelength, int *linenumber, int value)
 {
-	if (linelength > 247)
+	// 240 should give enough room for a 5 digit value and a comma with a bit of extra
+	// space in case something unusual happens without going over the 249 character
+	// limit Color Basic has on input lines.
+	if (linelength > 240)
 	{
 		fprintf(of, "\n");
 		linelength = fprintf(of, "%d DATA ", *linenumber);
