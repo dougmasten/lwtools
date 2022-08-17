@@ -14,8 +14,8 @@
 /lwcc/lwcc-cc
 
 # for windows
-\.suo$
-\.sdf$
-\.opensdf$
-\Debug$
-\Release$
+\\.suo$
+\\.sdf$
+\\.opensdf$
+\\Debug$
+\\Release$
