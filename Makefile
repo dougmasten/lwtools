@@ -44,7 +44,11 @@ CPPFLAGS += -DPREFIX=$(PREFIX) -DLWCC_LIBDIR=$(LWCC_LIBDIR)
 CPPFLAGS += -DPROGSUFFIX=$(PROGSUFFIX)
 LDFLAGS += -Llwlib -llw
 
-CFLAGS ?= -O3 -Wall -Wno-char-subscripts
+# The format truncation warnings are bleeping stupid when applied to
+# snprintf() and friends. I'm using snprintf() precisely to prevent
+# overflows and I don't care if the string is truncated, so why should
+# I need to test the return value? Bleeping stupid.
+CFLAGS ?= -O3 -Wall -Wno-char-subscripts -Wno-format-truncation
 
 MAIN_TARGETS := lwasm/lwasm$(PROGSUFFIX) \
 	lwlink/lwlink$(PROGSUFFIX) \
