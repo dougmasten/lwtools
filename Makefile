@@ -54,16 +54,20 @@ MAIN_TARGETS := lwasm/lwasm$(PROGSUFFIX) \
 	lwlink/lwlink$(PROGSUFFIX) \
 	lwar/lwar$(PROGSUFFIX) \
 	lwlink/lwobjdump$(PROGSUFFIX) \
-	lwcc/lwcc$(PROGSUFFIX) \
-	lwcc/lwcc-cpp$(PROGSUFFIX) \
+	lwcc/lwcc-cpp$(PROGSUFFIX)
+
+SECONDARY_TARGETS := lwcc/lwcc$(PROGSUFFIX) \
 	lwcc/lwcc-cc$(PROGSUFFIX)
 
 LWCC_LIBBIN_FILES = lwcc/lwcc-cpp$(PROGSUFFIX) lwcc/lwcc-cc$(PROGSUFFIX)
 LWCC_LIBLIB_FILES =
 LWCC_LIBINC_FILES =
 
+.PHONY: default
+default: $(MAIN_TARGETS)
+
 .PHONY: all
-all: $(MAIN_TARGETS)
+all: $(MAIN_TARGETS) $(SECONDARY_TARGETS)
 
 lwar_srcs := add.c extract.c list.c lwar.c main.c remove.c replace.c
 lwar_srcs := $(addprefix lwar/,$(lwar_srcs))
@@ -193,7 +197,7 @@ extra_clean := $(extra_clean) *~ */*~
 clean: $(cleantargs)
 	@echo "Cleaning up"
 	@rm -f lwlib/liblw.a lwasm/lwasm$(PROGSUFFIX) lwlink/lwlink$(PROGSUFFIX) lwlink/lwobjdump$(PROGSUFFIX) lwar/lwar$(PROGSUFFIX)
-	@rm -f lwcc/lwcc$(PROGSUFFIX) lwcc/lwcc-cpp$(PROGSUFFIX) lwcc/libcpp.a
+	@rm -f lwcc/lwcc$(PROGSUFFIX) lwcc/lwcc-cpp$(PROGSUFFIX) lwcc/lwcc-cc$(PROGSUFFIX) lwcc/libcpp.a
 	@rm -f $(lwcc_driver_objs) $(lwcc_cpp_objs) $(lwcc_cpplib_objs) $(lwcc_cc_objs)
 	@rm -f $(lwasm_objs) $(lwlink_objs) $(lwar_objs) $(lwlib_objs) $(lwobjdump_objs)
 	@rm -f $(extra_clean)
@@ -213,6 +217,10 @@ install: $(MAIN_TARGETS)
 	install -d $(INSTALLDIR)
 	install -d $(INSTALLBIN)
 	install $(MAIN_TARGETS) $(INSTALLBIN)
+
+.PHONY: install-all
+install-all: install
+	install $(SECONDARY_TARGETS) $(INSTALLBIN)
 	install -d $(LWCC_INSTALLLIBDIR)
 	install -d $(LWCC_INSTALLLIBDIR)/bin
 	install -d $(LWCC_INSTALLLIBDIR)/lib
