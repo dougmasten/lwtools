@@ -27,11 +27,22 @@ for handling inherent mode instructions
 #include "lwasm.h"
 #include "instab.h"
 
+PARSEFUNC(insn_parse_imm8);
+EMITFUNC(insn_emit_imm8);
+
 PARSEFUNC(insn_parse_rlist)
 {
 	int rb = 0;
 	int rn;
 	static const char *regs = "CCA B DPX Y U PCD S ";
+
+	l -> lint = 0;
+	if (**p == '#')
+	{
+		insn_parse_imm8(as, l, p);
+		l -> lint = 1;
+		return;
+	}
 
 	while (**p && !isspace(**p) && **p != ';' && **p != '*')
 	{
@@ -84,6 +95,12 @@ PARSEFUNC(insn_parse_rlist)
 
 EMITFUNC(insn_emit_rlist)
 {
+	if (l -> lint == 1)
+	{
+		insn_emit_imm8(as, l);
+		return;
+	}
+
 	lwasm_emitop(l, instab[l -> insn].ops[0]);
 	lwasm_emit(l, l -> pb);
 
