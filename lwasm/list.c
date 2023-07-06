@@ -269,7 +269,7 @@ void do_list(asmstate_t *as)
 
 		if (as -> tabwidth == 0)
 		{
-			fputs(cl -> ltext, of);
+			if (of) fputs(cl -> ltext, of);
 		}
 		else 
 		{
