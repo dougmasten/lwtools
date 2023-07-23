@@ -297,7 +297,10 @@ void input_open(asmstate_t *as, char *s)
 		
 	case input_type_file:
 		debug_message(as, 1, "Opening (reg): %s\n", s);
-		IS -> data = fopen(s, "rb");
+		if (s[0] == '-' && s[1] == '\0')
+			IS -> data = stdin;
+		else
+			IS -> data = fopen(s, "rb");
 
 		if (!IS -> data)
 		{
