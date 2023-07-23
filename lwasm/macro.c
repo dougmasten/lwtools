@@ -255,6 +255,23 @@ int expand_macro(asmstate_t *as, line_t *l, char **p, char *opc)
 					macro_add_to_buff(&linebuff, &bloc, &blen, *p3);
 				p2++;
 			}
+			else if (*p2 == '\\' && (p2[1] == 'L' || p2[1] == 'l') && isdigit(p2[2]))
+			{
+				int n;
+				int clen = 0;
+				char numbuf[10];
+				
+				p2 += 2;
+				n = *p2 - '0';
+				if (n == 0)
+					clen = strlen(m -> name);
+				else if (n >= 1 && n <= nargs)
+					clen = strlen(args[n - 1]);
+				snprintf(numbuf, 10, "%d", clen);
+				for (p3 = numbuf; *p3; p3++)
+					macro_add_to_buff(&linebuff, &bloc, &blen, *p3);
+				continue;
+			}
 			else if (*p2 == '\\' && isdigit(p2[1]))
 			{
 				int n;
@@ -276,7 +293,15 @@ int expand_macro(asmstate_t *as, line_t *l, char **p, char *opc)
 			else if (*p2 == '{')
 			{
 				int n = 0, n2;
+				int dolen = 0;
+				char numbuf[10];
+
 				p2++;
+				if (*p2 == 'L' || *p2 == 'l')
+				{
+					dolen = 1;
+					p2++;
+				}
 				while (*p2 && isdigit(*p2))
 				{
 					n2 = *p2 - '0';
@@ -291,14 +316,18 @@ int expand_macro(asmstate_t *as, line_t *l, char **p, char *opc)
 					p2--;
 				 
 				if (n == 0)
+					p3 = m -> name;
+				else if (n < 1 || n > nargs)
+					p3 = "";
+				else
+					p3 = args[n - 1];
+
+				if (dolen)
 				{
-					for (p3 = m -> name; *p3; p3++)
-						macro_add_to_buff(&linebuff, &bloc, &blen, *p3);
-					continue;
+					snprintf(numbuf, 10, "%d", (int)strlen(p3));
+					p3 = numbuf;
 				}
-				if (n < 1 || n > nargs)
-					continue;
-				for (p3 = args[n - 1]; *p3; p3++)
+				for (; *p3; p3++)
 					macro_add_to_buff(&linebuff, &bloc, &blen, *p3);
 				continue;
 			}
