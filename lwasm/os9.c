@@ -82,7 +82,7 @@ PARSEFUNC(pseudo_parse_mod)
 		return;
 	}
 
-	// parse 6 expressions...
+	// parse 6 (or 4) expressions...
 	for (i = 0; i < 5; i++)
 	{
 		e = lwasm_parse_expr(as, p);
@@ -96,12 +96,19 @@ PARSEFUNC(pseudo_parse_mod)
 
 		if (**p != ',')
 		{
+			if (i == 3)
+			{
+				// we don't have the extra items; flag it and don't bother
+				// with them later; goto is to short circuit the rest of
+				// the expression parsing
+				l -> lint = 4;
+				goto doneexpr;
+			}
 			lwasm_register_error(as, l, E_OPERAND_BAD);
 			return;
 		}
 		(*p)++;
 	}
-
 	e = lwasm_parse_expr(as, p);
 	if (!e)
 	{
@@ -109,7 +116,9 @@ PARSEFUNC(pseudo_parse_mod)
 		return;
 	}
 	lwasm_save_expr(l, 5, e);
+	l -> lint = 6;
 
+doneexpr:
 	l -> inmod = 1;
 	
 	// we have an implicit ORG 0 with "mod"
@@ -123,7 +132,7 @@ PARSEFUNC(pseudo_parse_mod)
 	// init crc
 	as -> inmod = 1;
 	
-	l -> len = 13;
+	l -> len = (i == 6) ? 13 : 9;
 }
 
 EMITFUNC(pseudo_emit_mod)
@@ -157,15 +166,18 @@ EMITFUNC(pseudo_emit_mod)
 		^ lw_expr_intval(e3) ^ lw_expr_intval(e4));
 	lwasm_emit(l, csum);
 
-	// module type specific output
-	// note that these are handled the same for all so
-	// there need not be any special casing
-	
-	// exec offset or fmgr name offset
-	lwasm_emitexpr(l, lwasm_fetch_expr(l, 4), 2);
-	
-	// data size or drvr name offset
-	lwasm_emitexpr(l, lwasm_fetch_expr(l, 5), 2);
+	if (l -> lint == 6)
+	{
+		// module type specific output, if provided
+		// note that these are handled the same for all so
+		// there need not be any special casing
+
+		// exec offset or fmgr name offset
+		lwasm_emitexpr(l, lwasm_fetch_expr(l, 4), 2);
+
+		// data size or drvr name offset
+		lwasm_emitexpr(l, lwasm_fetch_expr(l, 5), 2);
+	}
 }
 
 PARSEFUNC(pseudo_parse_emod)
