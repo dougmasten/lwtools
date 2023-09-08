@@ -48,7 +48,12 @@ LDFLAGS += -Llwlib -llw
 # snprintf() and friends. I'm using snprintf() precisely to prevent
 # overflows and I don't care if the string is truncated, so why should
 # I need to test the return value? Bleeping stupid.
-CFLAGS ?= -O3 -Wall -Wno-char-subscripts -Wno-format-truncation
+
+# -O3 breaks the build on some compiler/system targets so default to
+# -O2 which seems okay for now. Ideally identifying what breaks at
+# -O3 is indicated, but so far, identifying the specific source of
+# the breakage has been problematic.
+CFLAGS ?= -O2 -Wno-char-subscripts -Wno-format-truncation
 
 MAIN_TARGETS := lwasm/lwasm$(PROGSUFFIX) \
 	lwlink/lwlink$(PROGSUFFIX) \
