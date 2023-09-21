@@ -68,6 +68,7 @@ static struct lw_cmdline_options options[] =
 	{ "unicorns",	0x142,	0,			0,							"Add sooper sekrit sauce"},
 	{ "6800compat",	0x200,	0,			0,							"Enable 6800 compatibility instructions, equivalent to --pragma=6800compat" },
 	{ "no-output",  0x105,  0,          0,                          "Inhibit creation of output file" },
+	{ "no-warn",    0x109,  "FLAG",     0,                          "Suppress warnings of the specified type" },
 	{ 0 }
 };
 
@@ -261,6 +262,11 @@ static int parse_opts(int key, char *arg, void *state)
 		as -> preprocess = 1;
 		break;
 	
+	case 0x109:
+		if (!strcasecmp(arg, "ifp1") || !strcasecmp(arg, "ifp2"))
+			as -> nowarn_flags |= NOWARN_IFP1;
+		break;
+
 	case 0x200:
 		as -> pragmas |= PRAGMA_6800COMPAT;
 		break;

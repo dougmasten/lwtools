@@ -225,6 +225,9 @@ typedef enum
 	W_OPERAND_SIZE				= 1004
 } lwasm_errorcode_t;
 
+#define NOWARN_NONE             0
+#define NOWARN_IFP1             1
+
 typedef struct lwasm_error_s lwasm_error_t;
 struct lwasm_error_s
 {
@@ -441,6 +444,8 @@ struct asmstate_s
 	int fileerr;						// flags error opening file
 	int exprwidth;						// the bit width of the expression being evaluated
 	int listnofile;						// nonzero to suppress printing file name in listings
+	
+	int nowarn_flags;                   // flags indicating which warnings to suppress
 };
 
 struct symtabe *register_symbol(asmstate_t *as, line_t *cl, char *sym, lw_expr_t value, int flags);

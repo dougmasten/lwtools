@@ -1111,7 +1111,8 @@ PARSEFUNC(pseudo_parse_ifp1)
 		return;
 	}
 	
-	lwasm_register_error2(as, l, W_NOT_SUPPORTED, "%s", "IFP1");
+	if ((as -> nowarn_flags & NOWARN_IFP1) == 0)
+		lwasm_register_error2(as, l, W_NOT_SUPPORTED, "%s", "IFP1");
 }
 
 PARSEFUNC(pseudo_parse_ifp2)
@@ -1127,7 +1128,8 @@ PARSEFUNC(pseudo_parse_ifp2)
 		return;
 	}
 	
-	lwasm_register_error2(as, l, W_NOT_SUPPORTED, "%s", "IFP2");
+	if ((as -> nowarn_flags & NOWARN_IFP1) == 0)
+		lwasm_register_error2(as, l, W_NOT_SUPPORTED, "%s", "IFP2");
 }
 
 PARSEFUNC(pseudo_parse_ifeq)
