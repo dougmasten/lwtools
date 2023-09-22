@@ -132,7 +132,7 @@ doneexpr:
 	// init crc
 	as -> inmod = 1;
 	
-	l -> len = (i == 6) ? 13 : 9;
+	l -> len = (l -> lint == 6) ? 13 : 9;
 }
 
 EMITFUNC(pseudo_emit_mod)
