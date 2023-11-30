@@ -1342,6 +1342,12 @@ PARSEFUNC(pseudo_parse_ifdef)
 again:
 	for (i = 0; (*p)[i] && !isspace((*p)[i]) && (*p)[i] != '|' && (*p)[i] != '&'; i++)
 		/* do nothing */ ;
+
+	if (i == 0)
+	{
+		lwasm_register_error(as, l, E_OPERAND_BAD);
+		return;
+	}
 	
 	sym = lw_strndup(*p, i);
 	(*p) += i;
@@ -1382,6 +1388,12 @@ PARSEFUNC(pseudo_parse_ifndef)
 	for (i = 0; (*p)[i] && !isspace((*p)[i]) && (*p)[i] != '&' && (*p)[i] != '|'; i++)
 		/* do nothing */ ;
 	
+	if (i == 0)
+	{
+		lwasm_register_error(as, l, E_OPERAND_BAD);
+		return;
+	}
+
 	sym = lw_strndup(*p, i);
 	(*p) += i;
 	
