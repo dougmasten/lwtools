@@ -200,43 +200,43 @@ HREF="#CONVINST"
 ></DT
 ><DT
 >3.12. <A
-HREF="#AEN822"
+HREF="#AEN826"
 >Cycle Counts</A
 ></DT
 ></DL
 ></DD
 ><DT
 >4. <A
-HREF="#AEN828"
+HREF="#AEN832"
 >LWLINK</A
 ></DT
 ><DD
 ><DL
 ><DT
 >4.1. <A
-HREF="#AEN831"
+HREF="#AEN835"
 >Command Line Options</A
 ></DT
 ><DT
 >4.2. <A
-HREF="#AEN928"
+HREF="#AEN932"
 >Linker Operation</A
 ></DT
 ><DT
 >4.3. <A
-HREF="#AEN942"
+HREF="#AEN946"
 >Linking Scripts</A
 ></DT
 ><DT
 >4.4. <A
-HREF="#AEN1009"
+HREF="#AEN1013"
 >Format Specific Linking Notes</A
 ></DT
 ><DD
 ><DL
 ><DT
 >4.4.1. <A
-HREF="#AEN1012"
+HREF="#AEN1016"
 >OS9 Modules</A
 ></DT
 ></DL
@@ -245,14 +245,14 @@ HREF="#AEN1012"
 ></DD
 ><DT
 >5. <A
-HREF="#AEN1024"
+HREF="#AEN1028"
 >Libraries and LWAR</A
 ></DT
 ><DD
 ><DL
 ><DT
 >5.1. <A
-HREF="#AEN1028"
+HREF="#AEN1032"
 >Command Line Options</A
 ></DT
 ></DL
@@ -274,12 +274,12 @@ CLASS="LOT"
 ></DT
 ><DT
 >6-1. <A
-HREF="#AEN1111"
+HREF="#AEN1115"
 >Object File Term Types</A
 ></DT
 ><DT
 >6-2. <A
-HREF="#AEN1141"
+HREF="#AEN1145"
 >Object File Operator Numbers</A
 ></DT
 ></DL
@@ -907,7 +907,7 @@ CLASS="PARAMETER"
 CLASS="PARAMETER"
 >6800compat</CODE
 > pragma.  It also supports all known HD6309
-instructions.  While there is general agreement on the pneumonics for most
+instructions.  While there is general agreement on the mnemonics for most
 of the 6309 instructions, there is some variance with the block transfer
 instructions.  TFM for all four variations seems to have gained the most
 traction and, thus, this is the form that is recommended for LWASM. 
@@ -2449,7 +2449,19 @@ is of dubious utility, it is disabled by default.</P
 listing.  Also, any symbols defined under this pragma will not show up in
 the symbol list.  This is most useful in include files to avoid spamming the
 assembly listing with dozens, hundreds, or thousands of irrelevant
-symbols.</P
+symbols. It is important to note that this pragma will not hide lines that
+generate output to the binary.</P
+></DD
+><DT
+>nolistcode</DT
+><DD
+><P
+>Lines where this pragma is in effect will not appear in the assembly
+listing.  Also, any symbols defined under this pragma will not show up in
+the symbol list.  This is most useful in include files to avoid spamming the
+assembly listing with dozens, hundreds, or thousands of irrelevant
+symbols. Unlike "nolist", this pragma will hide lines that generate output
+to the binary.</P
 ></DD
 ><DT
 >autobranchlength</DT
@@ -2682,7 +2694,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN822"
+NAME="AEN826"
 >3.12. Cycle Counts</A
 ></H2
 ><P
@@ -2721,7 +2733,7 @@ CLASS="PROGRAMLISTING"
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN828"
+NAME="AEN832"
 ></A
 >Chapter 4. LWLINK</H1
 ><P
@@ -2732,7 +2744,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN831"
+NAME="AEN835"
 >4.1. Command Line Options</A
 ></H2
 ><P
@@ -2930,7 +2942,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN928"
+NAME="AEN932"
 >4.2. Linker Operation</A
 ></H2
 ><P
@@ -2986,7 +2998,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN942"
+NAME="AEN946"
 >4.3. Linking Scripts</A
 ></H2
 ><P
@@ -3193,7 +3205,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN1009"
+NAME="AEN1013"
 >4.4. Format Specific Linking Notes</A
 ></H2
 ><P
@@ -3206,7 +3218,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN1012"
+NAME="AEN1016"
 >4.4.1. OS9 Modules</A
 ></H3
 ><P
@@ -3282,7 +3294,7 @@ offset from U technique.</P
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN1024"
+NAME="AEN1028"
 ></A
 >Chapter 5. Libraries and LWAR</H1
 ><P
@@ -3301,7 +3313,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN1028"
+NAME="AEN1032"
 >5.1. Command Line Options</A
 ></H2
 ><P
@@ -3502,7 +3514,7 @@ by a NULL expression (only an end of expression term).</P
 ><DIV
 CLASS="TABLE"
 ><A
-NAME="AEN1111"
+NAME="AEN1115"
 ></A
 ><P
 ><B
@@ -3574,7 +3586,7 @@ exported symbols or external references.</P
 ><DIV
 CLASS="TABLE"
 ><A
-NAME="AEN1141"
+NAME="AEN1145"
 ></A
 ><P
 ><B

@@ -1896,7 +1896,22 @@ is of dubious utility, it is disabled by default.</para>
 listing.  Also, any symbols defined under this pragma will not show up in
 the symbol list.  This is most useful in include files to avoid spamming the
 assembly listing with dozens, hundreds, or thousands of irrelevant
-symbols.</para>
+symbols. It is important to note that this pragma will not hide lines that
+generate output to the binary.</para>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>nolistcode</term>
+<listitem>
+
+<para>Lines where this pragma is in effect will not appear in the assembly
+listing.  Also, any symbols defined under this pragma will not show up in
+the symbol list.  This is most useful in include files to avoid spamming the
+assembly listing with dozens, hundreds, or thousands of irrelevant
+symbols. Unlike "nolist", this pragma will hide lines that generate output
+to the binary.</para>
 
 </listitem>
 </varlistentry>
