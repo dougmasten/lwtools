@@ -115,6 +115,7 @@ enum lwasm_pragmas_e
 	PRAGMA_EMUEXT				= 1 << 26,  // enable emulator extensions
 	PRAGMA_NOOUTPUT             = 1 << 27,  // disable object code output
 	PRAGMA_NOEXPANDCOND         = 1 << 28,  // hide conditionals and skipped output in listings
+	PRAGMA_NOLISTCODE           = 1 << 29,  // hide line in listing even if it generates code
 	PRAGMA_CLEARBIT				= 1 << 31	// reserved to indicate negated pragma flag status
 };
 

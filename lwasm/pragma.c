@@ -55,6 +55,7 @@ static const struct pragma_list set_pragmas[] =
 	{ "pcaspcr", "nopcaspcr", PRAGMA_PCASPCR },
 	{ "shadow", "noshadow", PRAGMA_SHADOW },
 	{ "nolist", "list", PRAGMA_NOLIST },
+	{ "nolistcode", "listcode", PRAGMA_NOLISTCODE },
 	{ "autobranchlength", "noautobranchlength", PRAGMA_AUTOBRANCHLENGTH },
 	{ "export", "noexport", PRAGMA_EXPORT },
 	{ "symbolnocase", "nosymbolnocase", PRAGMA_SYMBOLNOCASE },
@@ -147,6 +148,8 @@ PARSEFUNC(pseudo_parse_pragma)
 	}
 	if (as -> pragmas & PRAGMA_NOLIST)
 		l -> pragmas |= PRAGMA_NOLIST;
+	if (as -> pragmas & PRAGMA_NOLISTCODE)
+		l -> pragmas |= PRAGMA_NOLISTCODE;
 	if (as->pragmas & PRAGMA_CC)
 	{
 		l->pragmas |= PRAGMA_CC;
@@ -171,6 +174,8 @@ PARSEFUNC(pseudo_parse_starpragma)
 	parse_pragma_string(as, ps, 1);
 	if (as -> pragmas & PRAGMA_NOLIST)
 		l -> pragmas |= PRAGMA_NOLIST;
+	if (as -> pragmas & PRAGMA_NOLISTCODE)
+		l -> pragmas |= PRAGMA_NOLISTCODE;
 	if (as->pragmas & PRAGMA_CC)
 	{
 		l->pragmas |= PRAGMA_CC;
@@ -226,6 +231,8 @@ PARSEFUNC(pseudo_parse_starpragmapop)
 				}
 				if (set_pragmas[i].flag == PRAGMA_NOLIST)
 					l -> pragmas |= PRAGMA_NOLIST;
+				if (set_pragmas[i].flag == PRAGMA_NOLISTCODE)
+					l -> pragmas |= PRAGMA_NOLISTCODE;
 			}
 		}
 		lw_free(pp);
@@ -282,6 +289,8 @@ PARSEFUNC(pseudo_parse_starpragmapush)
 				
 				if (set_pragmas[i].flag == PRAGMA_NOLIST)
 					l -> pragmas |= PRAGMA_NOLIST;
+				if (set_pragmas[i].flag == PRAGMA_NOLISTCODE)
+					l -> pragmas |= PRAGMA_NOLISTCODE;
 			}
 		}
 		lw_free(pp);

@@ -73,6 +73,10 @@ void do_list(asmstate_t *as)
 		char *linespec;
 
 		nl = cl -> next;
+		if (CURPRAGMA(cl, PRAGMA_NOLISTCODE))
+		{
+			continue;
+		}
 		if (CURPRAGMA(cl, PRAGMA_NOLIST))
 		{
 			if (cl -> outputl <= 0)
