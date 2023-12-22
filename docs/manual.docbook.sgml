@@ -842,7 +842,7 @@ permitted. The value of the double-words is undefined.
 </varlistentry>
 
 <varlistentry>
-<term>INCLUDEBIN <parameter>filename</parameter></term>
+<term>INCLUDEBIN <parameter>filename</parameter>[,<parameter>start</parameter>[,<parameter>length</parameter>]]</term>
 <listitem>
 <para>
 Treat the contents of <parameter>filename</parameter> as a string of bytes to
@@ -858,6 +858,14 @@ searched followed by the search path in the order specified.</para>
 <para> Please note that absolute path detection including drive letters will
 not function correctly on Windows platforms.  Non-absolute inclusion will
 work, however.</para>
+
+<para> The optional <parameter>start</parameter> parameter allows you to set
+the byte offset to start reading from the binary file. Positive values are
+from the beginning of the file, negative values are from the end of the file.</para>
+
+<para> The optional <parameter>length</parameter> parameter allows you to set
+the number of bytes read from the binary file. If missing, then the file is
+read to the end.</para>
 
 </listitem>
 </varlistentry>

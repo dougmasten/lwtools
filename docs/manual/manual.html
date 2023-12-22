@@ -153,44 +153,44 @@ HREF="#AEN264"
 ></DT
 ><DT
 >3.6.2. <A
-HREF="#AEN375"
+HREF="#AEN381"
 >Address Definition</A
 ></DT
 ><DT
 >3.6.3. <A
-HREF="#AEN426"
+HREF="#AEN432"
 >Conditional Assembly</A
 ></DT
 ><DT
 >3.6.4. <A
-HREF="#AEN497"
+HREF="#AEN503"
 >OS9 Target Directives</A
 ></DT
 ><DT
 >3.6.5. <A
-HREF="#AEN522"
+HREF="#AEN528"
 >Miscelaneous Directives</A
 ></DT
 ></DL
 ></DD
 ><DT
 >3.7. <A
-HREF="#AEN562"
+HREF="#AEN568"
 >Macros</A
 ></DT
 ><DT
 >3.8. <A
-HREF="#AEN585"
+HREF="#AEN591"
 >Structures</A
 ></DT
 ><DT
 >3.9. <A
-HREF="#AEN606"
+HREF="#AEN612"
 >Object Files and Sections</A
 ></DT
 ><DT
 >3.10. <A
-HREF="#AEN670"
+HREF="#AEN676"
 >Assembler Modes and Pragmas</A
 ></DT
 ><DT
@@ -200,43 +200,43 @@ HREF="#CONVINST"
 ></DT
 ><DT
 >3.12. <A
-HREF="#AEN826"
+HREF="#AEN832"
 >Cycle Counts</A
 ></DT
 ></DL
 ></DD
 ><DT
 >4. <A
-HREF="#AEN832"
+HREF="#AEN838"
 >LWLINK</A
 ></DT
 ><DD
 ><DL
 ><DT
 >4.1. <A
-HREF="#AEN835"
+HREF="#AEN841"
 >Command Line Options</A
 ></DT
 ><DT
 >4.2. <A
-HREF="#AEN932"
+HREF="#AEN938"
 >Linker Operation</A
 ></DT
 ><DT
 >4.3. <A
-HREF="#AEN946"
+HREF="#AEN952"
 >Linking Scripts</A
 ></DT
 ><DT
 >4.4. <A
-HREF="#AEN1013"
+HREF="#AEN1019"
 >Format Specific Linking Notes</A
 ></DT
 ><DD
 ><DL
 ><DT
 >4.4.1. <A
-HREF="#AEN1016"
+HREF="#AEN1022"
 >OS9 Modules</A
 ></DT
 ></DL
@@ -245,14 +245,14 @@ HREF="#AEN1016"
 ></DD
 ><DT
 >5. <A
-HREF="#AEN1028"
+HREF="#AEN1034"
 >Libraries and LWAR</A
 ></DT
 ><DD
 ><DL
 ><DT
 >5.1. <A
-HREF="#AEN1032"
+HREF="#AEN1038"
 >Command Line Options</A
 ></DT
 ></DL
@@ -274,12 +274,12 @@ CLASS="LOT"
 ></DT
 ><DT
 >6-1. <A
-HREF="#AEN1115"
+HREF="#AEN1121"
 >Object File Term Types</A
 ></DT
 ><DT
 >6-2. <A
-HREF="#AEN1145"
+HREF="#AEN1151"
 >Object File Operator Numbers</A
 ></DT
 ></DL
@@ -1254,7 +1254,13 @@ permitted. The value of the double-words is undefined.</P
 >INCLUDEBIN <CODE
 CLASS="PARAMETER"
 >filename</CODE
-></DT
+>[,<CODE
+CLASS="PARAMETER"
+>start</CODE
+>[,<CODE
+CLASS="PARAMETER"
+>length</CODE
+>]]</DT
 ><DD
 ><P
 >Treat the contents of <CODE
@@ -1275,6 +1281,20 @@ searched followed by the search path in the order specified.</P
 > Please note that absolute path detection including drive letters will
 not function correctly on Windows platforms.  Non-absolute inclusion will
 work, however.</P
+><P
+> The optional <CODE
+CLASS="PARAMETER"
+>start</CODE
+> parameter allows you to set
+the byte offset to start reading from the binary file. Positive values are
+from the beginning of the file, negative values are from the end of the file.</P
+><P
+> The optional <CODE
+CLASS="PARAMETER"
+>length</CODE
+> parameter allows you to set
+the number of bytes read from the binary file. If missing, then the file is
+read to the end.</P
 ></DD
 ><DT
 >FILL <CODE
@@ -1302,7 +1322,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN375"
+NAME="AEN381"
 >3.6.2. Address Definition</A
 ></H3
 ><P
@@ -1448,7 +1468,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN426"
+NAME="AEN432"
 >3.6.3. Conditional Assembly</A
 ></H3
 ><P
@@ -1623,7 +1643,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN497"
+NAME="AEN503"
 >3.6.4. OS9 Target Directives</A
 ></H3
 ><P
@@ -1690,7 +1710,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN522"
+NAME="AEN528"
 >3.6.5. Miscelaneous Directives</A
 ></H3
 ><P
@@ -1804,7 +1824,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN562"
+NAME="AEN568"
 >3.7. Macros</A
 ></H2
 ><P
@@ -1903,7 +1923,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN585"
+NAME="AEN591"
 >3.8. Structures</A
 ></H2
 ><P
@@ -1996,7 +2016,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN606"
+NAME="AEN612"
 >3.9. Object Files and Sections</A
 ></H2
 ><P
@@ -2213,7 +2233,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN670"
+NAME="AEN676"
 >3.10. Assembler Modes and Pragmas</A
 ></H2
 ><P
@@ -2694,7 +2714,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN826"
+NAME="AEN832"
 >3.12. Cycle Counts</A
 ></H2
 ><P
@@ -2733,7 +2753,7 @@ CLASS="PROGRAMLISTING"
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN832"
+NAME="AEN838"
 ></A
 >Chapter 4. LWLINK</H1
 ><P
@@ -2744,7 +2764,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN835"
+NAME="AEN841"
 >4.1. Command Line Options</A
 ></H2
 ><P
@@ -2942,7 +2962,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN932"
+NAME="AEN938"
 >4.2. Linker Operation</A
 ></H2
 ><P
@@ -2998,7 +3018,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN946"
+NAME="AEN952"
 >4.3. Linking Scripts</A
 ></H2
 ><P
@@ -3205,7 +3225,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN1013"
+NAME="AEN1019"
 >4.4. Format Specific Linking Notes</A
 ></H2
 ><P
@@ -3218,7 +3238,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN1016"
+NAME="AEN1022"
 >4.4.1. OS9 Modules</A
 ></H3
 ><P
@@ -3294,7 +3314,7 @@ offset from U technique.</P
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN1028"
+NAME="AEN1034"
 ></A
 >Chapter 5. Libraries and LWAR</H1
 ><P
@@ -3313,7 +3333,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN1032"
+NAME="AEN1038"
 >5.1. Command Line Options</A
 ></H2
 ><P
@@ -3514,7 +3534,7 @@ by a NULL expression (only an end of expression term).</P
 ><DIV
 CLASS="TABLE"
 ><A
-NAME="AEN1115"
+NAME="AEN1121"
 ></A
 ><P
 ><B
@@ -3586,7 +3606,7 @@ exported symbols or external references.</P
 ><DIV
 CLASS="TABLE"
 ><A
-NAME="AEN1145"
+NAME="AEN1151"
 ></A
 ><P
 ><B

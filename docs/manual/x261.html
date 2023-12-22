@@ -17,7 +17,7 @@ TITLE="Numbers and Expressions"
 HREF="x253.html"><LINK
 REL="NEXT"
 TITLE="Macros"
-HREF="x562.html"></HEAD
+HREF="x568.html"></HEAD
 ><BODY
 CLASS="SECTION"
 BGCOLOR="#FFFFFF"
@@ -59,7 +59,7 @@ WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="x562.html"
+HREF="x568.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -272,7 +272,13 @@ permitted. The value of the double-words is undefined.</P
 >INCLUDEBIN <CODE
 CLASS="PARAMETER"
 >filename</CODE
-></DT
+>[,<CODE
+CLASS="PARAMETER"
+>start</CODE
+>[,<CODE
+CLASS="PARAMETER"
+>length</CODE
+>]]</DT
 ><DD
 ><P
 >Treat the contents of <CODE
@@ -293,6 +299,20 @@ searched followed by the search path in the order specified.</P
 > Please note that absolute path detection including drive letters will
 not function correctly on Windows platforms.  Non-absolute inclusion will
 work, however.</P
+><P
+> The optional <CODE
+CLASS="PARAMETER"
+>start</CODE
+> parameter allows you to set
+the byte offset to start reading from the binary file. Positive values are
+from the beginning of the file, negative values are from the end of the file.</P
+><P
+> The optional <CODE
+CLASS="PARAMETER"
+>length</CODE
+> parameter allows you to set
+the number of bytes read from the binary file. If missing, then the file is
+read to the end.</P
 ></DD
 ><DT
 >FILL <CODE
@@ -320,7 +340,7 @@ CLASS="SECTION"
 ><H2
 CLASS="SECTION"
 ><A
-NAME="AEN375"
+NAME="AEN381"
 >3.6.2. Address Definition</A
 ></H2
 ><P
@@ -466,7 +486,7 @@ CLASS="SECTION"
 ><H2
 CLASS="SECTION"
 ><A
-NAME="AEN426"
+NAME="AEN432"
 >3.6.3. Conditional Assembly</A
 ></H2
 ><P
@@ -641,7 +661,7 @@ CLASS="SECTION"
 ><H2
 CLASS="SECTION"
 ><A
-NAME="AEN497"
+NAME="AEN503"
 >3.6.4. OS9 Target Directives</A
 ></H2
 ><P
@@ -708,7 +728,7 @@ CLASS="SECTION"
 ><H2
 CLASS="SECTION"
 ><A
-NAME="AEN522"
+NAME="AEN528"
 >3.6.5. Miscelaneous Directives</A
 ></H2
 ><P
@@ -851,7 +871,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="x562.html"
+HREF="x568.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
