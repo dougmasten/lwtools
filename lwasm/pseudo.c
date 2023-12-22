@@ -1500,7 +1500,7 @@ PARSEFUNC(pseudo_parse_includebin)
 	}
 	else
 	{
-		for (p2 = *p; *p2 && !isspace(*p2); p2++)
+		for (p2 = *p; *p2 && *p2 != ',' && !isspace(*p2); p2++)
 			/* do nothing */ ;
 	}
 	fn = lw_strndup(*p, p2 - *p);
