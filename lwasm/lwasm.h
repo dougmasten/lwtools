@@ -216,6 +216,8 @@ typedef enum
 	E_ORG_NOT_FOUND				= 57,
 	E_COMPLEX_INCOMPLETE        = 58,
 	E_ILL5						= 59,
+	E_INCLUDEBIN_ILL_START      = 60,
+	E_INCLUDEBIN_ILL_LENGTH     = 61,
 	
 	/* warnings must be 1000 or greater */
 

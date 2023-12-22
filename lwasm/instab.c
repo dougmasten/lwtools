@@ -317,7 +317,7 @@ PARSEFUNC(pseudo_parse_export);
 #define pseudo_emit_export NULL
 
 PARSEFUNC(pseudo_parse_includebin);
-#define pseudo_resolve_includebin NULL
+RESOLVEFUNC(pseudo_resolve_includebin);
 EMITFUNC(pseudo_emit_includebin);
 
 PARSEFUNC(pseudo_parse_includestr);

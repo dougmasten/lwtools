@@ -1482,7 +1482,8 @@ PARSEFUNC(pseudo_parse_includebin)
 	FILE *fp;
 	long flen;
 	char *rfn;
-	
+	lw_expr_t e, e1;
+
 	if (!**p)
 	{
 		lwasm_register_error(as, l, E_FILENAME_MISSING);
@@ -1522,12 +1523,94 @@ PARSEFUNC(pseudo_parse_includebin)
 	fclose(fp);
 
 	l -> len = flen;
+
+	if (**p == ',')
+	{
+		(*p)++;
+		e = lwasm_parse_expr(as, p);
+
+		if (e)
+			lwasm_save_expr(l, 0, e);
+
+		if (**p == ',')
+		{
+			(*p)++;
+			e1 = lwasm_parse_expr(as, p);
+
+			if (e1)
+				lwasm_save_expr(l, 1, e1);
+		}
+	}
+}
+
+RESOLVEFUNC(pseudo_resolve_includebin)
+{
+	lw_expr_t e, e1, n;
+	int i = 0, i1;
+
+	e = lwasm_fetch_expr(l, 0);
+	e1 = lwasm_fetch_expr(l, 1);
+	
+	// if offset and/or length specified, make sure they've resolved
+	// before we do anything
+	if (e && !lw_expr_istype(e, lw_expr_type_int))
+		return;
+	if (e1 && !lwexpr_istype(e, lw_expr_type_int))
+		return;
+	if (e != NULL)
+	{
+		i = lw_expr_intval(e);
+
+		if (i < 0)
+			i = l -> len + i;
+	}
+	
+	i1 = l -> len - i;
+
+	e1 = lwasm_fetch_expr(l, 1);
+
+	if (e1 != NULL)
+	{
+		i1 = lw_expr_intval(e1);
+	}
+
+	if( i < 0 )
+	{
+		/* starting before file */
+		lwasm_register_error(as, l, E_INCLUDEBIN_ILL_START);
+		return;
+	}
+
+	if (i > l -> len)
+	{
+		/* starts past end of file */
+		lwasm_register_error(as, l, E_INCLUDEBIN_ILL_START);
+		return;
+	}
+
+	if (i1 < 0)
+	{
+		/* length is negative */
+		lwasm_register_error(as, l, E_INCLUDEBIN_ILL_LENGTH);
+		return;
+	}
+
+	if (i + i1 > l -> len)
+	{
+		/* read past end of file */
+		lwasm_register_error(as, l, E_INCLUDEBIN_ILL_LENGTH);
+		return;
+	}
+
+
+	l -> lint = i; // pass forward offset
+	l -> len = i1;
 }
 
 EMITFUNC(pseudo_emit_includebin)
 {
 	FILE *fp;
-	int c;
+	int c, i;
 	
 	fp = fopen(l -> lstr, "rb");
 	if (!fp)
@@ -1536,7 +1619,10 @@ EMITFUNC(pseudo_emit_includebin)
 		return;
 	}
 	
-	for (;;)
+	// apply the specified offset
+	fseek(fp, l -> lint, SEEK_SET);
+
+	for (i=0; i < l -> len; i++)
 	{
 		c = fgetc(fp);
 		if (c == EOF)
