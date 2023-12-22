@@ -1555,7 +1555,7 @@ RESOLVEFUNC(pseudo_resolve_includebin)
 	// before we do anything
 	if (e && !lw_expr_istype(e, lw_expr_type_int))
 		return;
-	if (e1 && !lwexpr_istype(e, lw_expr_type_int))
+	if (e1 && !lw_expr_istype(e, lw_expr_type_int))
 		return;
 	if (e != NULL)
 	{
