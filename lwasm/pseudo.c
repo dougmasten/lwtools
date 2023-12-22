@@ -1522,7 +1522,7 @@ PARSEFUNC(pseudo_parse_includebin)
 	flen = ftell(fp);
 	fclose(fp);
 
-	l -> len = flen;
+	l -> lint2 = flen;
 
 	if (**p == ',')
 	{
@@ -1540,6 +1540,10 @@ PARSEFUNC(pseudo_parse_includebin)
 			if (e1)
 				lwasm_save_expr(l, 1, e1);
 		}
+	}
+	else
+	{
+		l -> len = flen; // length is resolved
 	}
 }
 
@@ -1562,10 +1566,10 @@ RESOLVEFUNC(pseudo_resolve_includebin)
 		i = lw_expr_intval(e);
 
 		if (i < 0)
-			i = l -> len + i;
+			i = l -> lint2 + i;
 	}
 	
-	i1 = l -> len - i;
+	i1 = l -> lint2 - i;
 
 	e1 = lwasm_fetch_expr(l, 1);
 
@@ -1581,7 +1585,7 @@ RESOLVEFUNC(pseudo_resolve_includebin)
 		return;
 	}
 
-	if (i > l -> len)
+	if (i > l -> lint2)
 	{
 		/* starts past end of file */
 		lwasm_register_error(as, l, E_INCLUDEBIN_ILL_START);
@@ -1595,7 +1599,7 @@ RESOLVEFUNC(pseudo_resolve_includebin)
 		return;
 	}
 
-	if (i + i1 > l -> len)
+	if (i + i1 > l -> lint2)
 	{
 		/* read past end of file */
 		lwasm_register_error(as, l, E_INCLUDEBIN_ILL_LENGTH);
