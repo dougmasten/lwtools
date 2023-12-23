@@ -1549,7 +1549,7 @@ PARSEFUNC(pseudo_parse_includebin)
 
 RESOLVEFUNC(pseudo_resolve_includebin)
 {
-	lw_expr_t e, e1, n;
+	lw_expr_t e, e1;
 	int i = 0, i1;
 
 	e = lwasm_fetch_expr(l, 0);
