@@ -221,6 +221,8 @@ void do_list(asmstate_t *as)
 		{
 			linespec = cl -> linespec;
 			if ((strlen(linespec) > 8) && (linespec[7] == ':')) linespec += 8;
+			if (strlen(linespec) > max_linespec_len)
+				linespec += strlen(linespec) - max_linespec_len;
 			while (*linespec == ' ') linespec++;
 
 			if (of) fprintf(of, "(%*.*s):%05d ", max_linespec_len, max_linespec_len, linespec, cl->lineno);
