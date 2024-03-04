@@ -29,6 +29,14 @@ CONTRIBUTING
 If you wish to contribute patches or code to lwtools, please keep the
 following in mind.
 
+Evangelism
+----------
+
+Any communication that includes evangelism for alternate revision control
+systems, coding styles, development methodologies, or similar will be
+deleted with all other contents ignored. So just don't do it and save
+yourself and the project maintainers time.
+
 Style
 -----
 
@@ -39,12 +47,13 @@ likely met with extreme rudeness.
 
 C code should be formatted as follows:
 
-* All indentation uses a single TAB character for each step. That is a HARD
-  tab, not a series of spaces. TABs are assumed to be 4 characters though
-  that will largely impact only lining up comments and tabular code. If the
-  actual formatting of the code is critical, spaces may be used for that
-  formatting but the actual initial indentation of the lines MUST use TAB
-  characters.
+* In general, match the formatting of the surrounding code, whether that
+  uses spaces or tabs. Otherwise, all indentation uses a single TAB
+  character for each step. That is a HARD tab, not a series of spaces. TABs
+  are assumed to be 4 characters though that will largely impact only lining
+  up comments and tabular code. If the actual formatting of the code is
+  critical, spaces may be used for that formatting but the actual initial
+  indentation of the lines MUST use TAB characters.
 * The opening brace for a block appears on the line below the control
   structure that introduces it. It appears lined up with the preceding line
   and nothing else appears on the same line.
@@ -68,6 +77,9 @@ style may be less strict.
 
 Submitting
 ----------
+
+Any attempts to evangelize git or any other alternative revision control
+system will be deleted with *all* other contents ignored.
 
 When submitting code to lwtools, it should be submitted as a patch file (hg
 diff or diff -u). DO NOT submit entire source files. Remember, others may be
