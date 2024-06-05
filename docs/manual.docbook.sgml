@@ -2004,7 +2004,7 @@ of this, "forwardrefmax" has been the default setting since version 4.14 of
 LWTOOLS. To turn it off, use "noforwardrefmax".</para>
 
 <para>Enabling this pragma will cause all forward references to use the
-maximum offset or address size, much the same has EDTASM and other pure
+maximum offset or address size, much the same as EDTASM and other pure
 two pass assemblers do. The side effect is that all line lengths and
 symbol values are fully resolved after the initial parsing pass and the
 amount of work to resolve everything becomes almost nil.</para>
