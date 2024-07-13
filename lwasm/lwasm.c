@@ -641,6 +641,25 @@ lw_expr_t lwasm_parse_term(char **p, void *priv)
 		}
 		return lw_expr_build(lw_expr_type_int, val * neg);
 	}
+	if (**p == '0' && (*((*p)+1) == 'b' || *((*p)+1) == 'B'))
+	{
+		val = 0;
+		// binary constant
+		(*p) += 2;
+
+		if (**p != '0' && **p != '1')
+		{
+			(*p)-2;
+			return NULL;
+		}
+
+		while (**p && (**p == '0' || **p == '1'))
+		{
+			val = val * 2 + (**p - '0');
+			(*p)++;
+		}
+		return lw_expr_build(lw_expr_type_int, val);
+	}
 	
 	if (**p == '$')
 	{
