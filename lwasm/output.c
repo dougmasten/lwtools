@@ -1000,6 +1000,10 @@ void write_code_obj(asmstate_t *as, FILE *of)
 			buf[0] = (offset >> 8) & 0xff;
 			buf[1] = offset & 0xff;
 			writebytes(buf, 2, 1, of);
+
+			// clean up after ourselves so other stuff doesn't explode
+			as -> cl = NULL;
+			as -> exportcheck = 0;
 		}
 
 		// flag end of incomplete references list
