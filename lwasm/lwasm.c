@@ -649,8 +649,8 @@ lw_expr_t lwasm_parse_term(char **p, void *priv)
 
 		if (**p != '0' && **p != '1')
 		{
-			(*p) -= 2;
-			return NULL;
+			// in this case, we have 0 (suffix notation 0b)
+			return lw_expr_build(lw_expr_type_int, 0);
 		}
 
 		while (**p && (**p == '0' || **p == '1'))
