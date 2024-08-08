@@ -649,7 +649,7 @@ lw_expr_t lwasm_parse_term(char **p, void *priv)
 
 		if (**p != '0' && **p != '1')
 		{
-			(*p)-2;
+			(*p) -= 2;
 			return NULL;
 		}
 
