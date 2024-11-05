@@ -514,8 +514,10 @@ int lw_expr_simplify_isliketerm(lw_expr_t e1, lw_expr_t e2)
 	if (e2 -> type == lw_expr_type_oper && e2 -> value == lw_expr_oper_times)
 	{
 		// e2 is a times
+		if (!(e2 -> operands -> next))
+			return 0; // if there aren't at least two operands
 		if (e2 -> operands -> next -> next)
-			return 0;
+			return 0; // if there is more than one operand
 		if (!lw_expr_compare(e1, e2 -> operands -> next -> p))
 			return 0;
 		return 1;
