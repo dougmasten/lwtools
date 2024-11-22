@@ -1521,6 +1521,7 @@ PARSEFUNC(pseudo_parse_includebin)
 	fseek(fp, 0, SEEK_END);
 	flen = ftell(fp);
 	fclose(fp);
+	lw_free(fn);
 
 	l -> lint2 = flen;
 
