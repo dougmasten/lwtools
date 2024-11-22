@@ -273,6 +273,8 @@ void write_code_raw(asmstate_t *as, FILE *of)
 	{
 		if (cl -> outputl > 0)
 			break;
+		if (cl -> insn < 0)
+			continue;
 		if (instab[cl -> insn].flags & lwasm_insn_org)
 			sl = cl;
 	}
