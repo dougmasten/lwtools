@@ -965,6 +965,9 @@ PARSEFUNC(pseudo_parse_org)
 		lwasm_register_error(as, l, E_OPERAND_BAD);
 		return;
 	}
+
+	// this should reduce the current line address references
+	lwasm_reduce_expr(as, e);
 	
 	lw_expr_destroy(l -> daddr);
 	l -> daddr = e;
@@ -1003,6 +1006,9 @@ PARSEFUNC(pseudo_parse_reorg)
 		lwasm_register_error(as, l, E_ORG_NOT_FOUND);
 		return;
 	}
+
+	// this should reduce the current line address references
+	lwasm_reduce_expr(as, e);
 
 	lw_expr_destroy(l -> daddr);
 	l -> daddr = e;
