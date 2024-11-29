@@ -2,7 +2,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Convenience Instructions</TITLE
+>BASIC file</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
@@ -10,14 +10,14 @@ REL="HOME"
 TITLE="LW Tool Chain"
 HREF="index.html"><LINK
 REL="UP"
-TITLE="LWASM"
-HREF="c62.html"><LINK
+TITLE="Output Formats"
+HREF="c21.html"><LINK
 REL="PREVIOUS"
-TITLE="Assembler Modes and Pragmas"
-HREF="x676.html"><LINK
+TITLE="Object Files"
+HREF="x54.html"><LINK
 REL="NEXT"
-TITLE="Cycle Counts"
-HREF="x832.html"></HEAD
+TITLE="LWASM"
+HREF="c66.html"></HEAD
 ><BODY
 CLASS="SECTION"
 BGCOLOR="#FFFFFF"
@@ -45,7 +45,7 @@ WIDTH="10%"
 ALIGN="left"
 VALIGN="bottom"
 ><A
-HREF="x676.html"
+HREF="x54.html"
 ACCESSKEY="P"
 >Prev</A
 ></TD
@@ -53,13 +53,13 @@ ACCESSKEY="P"
 WIDTH="80%"
 ALIGN="center"
 VALIGN="bottom"
->Chapter 3. LWASM</TD
+>Chapter 2. Output Formats</TD
 ><TD
 WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="x832.html"
+HREF="c66.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -73,25 +73,15 @@ CLASS="SECTION"
 ><H1
 CLASS="SECTION"
 ><A
-NAME="CONVINST"
->3.11. Convenience Instructions</A
+NAME="AEN62"
+>2.8. BASIC file</A
 ></H1
 ><P
->&#13;Similar to the 6800 compatibility instructions (pragma 6800compat) these
-pragma 6809conv and pragma 6309conv enable convenience extensions to the
-6809 and 6309 instruction set.  Originally intended for compatibility with
-the MACRO-80c assembler, these have proven useful in large codebases that
-target both the 6809 and the 6309.</P
+>This output type produces an ASCII Color BASIC program. When run, this program will
+READ from DATA statements to POKE program values into RAM. If the execution
+address is non-zero, control will transfer to the program.</P
 ><P
->&#13;The 6809 extensions are straightforward with the exception of "TSTD" which
-assembles as "STD -2,S".  A benefit of using these is they will "just work"
-and take on their 6309 equivalent when you enable 6309 assembly mode. 
-Supported instructions: ASRD, CLRD,   COMD,   LSLD,   LSRD,   NEGD,   TSTD.</P
-><P
->&#13;6309 extensions are based on common patterns described by Chris Burke and
-Darren Atkinson in their 6309 documentation and include the following
-instructions: ASRQ,   CLRQ,   COMQ,   LSLE,   LSLF,   LSLQ,   LSRQ,   NEGE,
-   NEGF,   NEGW,   NEGQ,   TSTQ.</P
+>This is only supported by LWASM, not LWLINK.</P
 ></DIV
 ><DIV
 CLASS="NAVFOOTER"
@@ -109,7 +99,7 @@ WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
 ><A
-HREF="x676.html"
+HREF="x54.html"
 ACCESSKEY="P"
 >Prev</A
 ></TD
@@ -127,7 +117,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="x832.html"
+HREF="c66.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -137,13 +127,13 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Assembler Modes and Pragmas</TD
+>Object Files</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
 VALIGN="top"
 ><A
-HREF="c62.html"
+HREF="c21.html"
 ACCESSKEY="U"
 >Up</A
 ></TD
@@ -151,7 +141,7 @@ ACCESSKEY="U"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Cycle Counts</TD
+>LWASM</TD
 ></TR
 ></TABLE
 ></DIV

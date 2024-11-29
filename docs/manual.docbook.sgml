@@ -253,6 +253,19 @@ mode instruction.  In this case, only the low order eight bits will be used.
 Again, no byte overflows will be flagged.
 </para>
 
+</section>
+
+<section>
+<title>BASIC file</title>
+<para>
+This output type produces an ASCII Color BASIC program. When run, this program will
+READ from DATA statements to POKE program values into RAM. If the execution
+address is non-zero, control will transfer to the program.
+</para>
+
+<para>
+This is only supported by LWASM, not LWLINK.
+</para>
 
 </section>
 
@@ -335,7 +348,7 @@ object file target, <option>decb</option> for the DECB LOADM format,
 <option>os9</option> for creating OS9 modules, <option>raw</option> for
 a raw binary, <option>hex</option> for ASCII hexadecminal format, 
 <option>srec</option> for Motorola S-Record format, and <option>ihex</option>
- for Intel Hex format.
+ for Intel Hex format, <option>basic</option> for the Color BASIC program format.
 </para>
 </listitem>
 </varlistentry>

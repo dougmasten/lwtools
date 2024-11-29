@@ -105,92 +105,97 @@ HREF="#AEN46"
 HREF="#AEN54"
 >Object Files</A
 ></DT
+><DT
+>2.8. <A
+HREF="#AEN62"
+>BASIC file</A
+></DT
 ></DL
 ></DD
 ><DT
 >3. <A
-HREF="#AEN62"
+HREF="#AEN66"
 >LWASM</A
 ></DT
 ><DD
 ><DL
 ><DT
 >3.1. <A
-HREF="#AEN65"
+HREF="#AEN69"
 >Command Line Options</A
 ></DT
 ><DT
 >3.2. <A
-HREF="#AEN229"
+HREF="#AEN234"
 >Dialects</A
 ></DT
 ><DT
 >3.3. <A
-HREF="#AEN238"
+HREF="#AEN243"
 >Source Format</A
 ></DT
 ><DT
 >3.4. <A
-HREF="#AEN248"
+HREF="#AEN253"
 >Symbols</A
 ></DT
 ><DT
 >3.5. <A
-HREF="#AEN253"
+HREF="#AEN258"
 >Numbers and Expressions</A
 ></DT
 ><DT
 >3.6. <A
-HREF="#AEN261"
+HREF="#AEN266"
 >Assembler Directives</A
 ></DT
 ><DD
 ><DL
 ><DT
 >3.6.1. <A
-HREF="#AEN264"
+HREF="#AEN269"
 >Data Directives</A
 ></DT
 ><DT
 >3.6.2. <A
-HREF="#AEN381"
+HREF="#AEN386"
 >Address Definition</A
 ></DT
 ><DT
 >3.6.3. <A
-HREF="#AEN432"
+HREF="#AEN437"
 >Conditional Assembly</A
 ></DT
 ><DT
 >3.6.4. <A
-HREF="#AEN503"
+HREF="#AEN508"
 >OS9 Target Directives</A
 ></DT
 ><DT
 >3.6.5. <A
-HREF="#AEN528"
+HREF="#AEN533"
 >Miscelaneous Directives</A
 ></DT
 ></DL
 ></DD
 ><DT
 >3.7. <A
-HREF="#AEN568"
+HREF="#AEN573"
 >Macros</A
 ></DT
 ><DT
 >3.8. <A
-HREF="#AEN591"
+HREF="#AEN596"
 >Structures</A
 ></DT
 ><DT
 >3.9. <A
-HREF="#AEN612"
+HREF="#AEN617"
 >Object Files and Sections</A
 ></DT
 ><DT
 >3.10. <A
-HREF="#AEN676"
+HREF="#AEN681"
 >Assembler Modes and Pragmas</A
 ></DT
 ><DT
@@ -200,43 +205,43 @@ HREF="#CONVINST"
 ></DT
 ><DT
 >3.12. <A
-HREF="#AEN832"
+HREF="#AEN837"
 >Cycle Counts</A
 ></DT
 ></DL
 ></DD
 ><DT
 >4. <A
-HREF="#AEN838"
+HREF="#AEN843"
 >LWLINK</A
 ></DT
 ><DD
 ><DL
 ><DT
 >4.1. <A
-HREF="#AEN841"
+HREF="#AEN846"
 >Command Line Options</A
 ></DT
 ><DT
 >4.2. <A
-HREF="#AEN938"
+HREF="#AEN943"
 >Linker Operation</A
 ></DT
 ><DT
 >4.3. <A
-HREF="#AEN952"
+HREF="#AEN957"
 >Linking Scripts</A
 ></DT
 ><DT
 >4.4. <A
-HREF="#AEN1019"
+HREF="#AEN1024"
 >Format Specific Linking Notes</A
 ></DT
 ><DD
 ><DL
 ><DT
 >4.4.1. <A
-HREF="#AEN1022"
+HREF="#AEN1027"
 >OS9 Modules</A
 ></DT
 ></DL
@@ -245,14 +250,14 @@ HREF="#AEN1022"
 ></DD
 ><DT
 >5. <A
-HREF="#AEN1034"
+HREF="#AEN1039"
 >Libraries and LWAR</A
 ></DT
 ><DD
 ><DL
 ><DT
 >5.1. <A
-HREF="#AEN1038"
+HREF="#AEN1043"
 >Command Line Options</A
 ></DT
 ></DL
@@ -274,12 +279,12 @@ CLASS="LOT"
 ></DT
 ><DT
 >6-1. <A
-HREF="#AEN1121"
+HREF="#AEN1126"
 >Object File Term Types</A
 ></DT
 ><DT
 >6-2. <A
-HREF="#AEN1151"
+HREF="#AEN1156"
 >Object File Operator Numbers</A
 ></DT
 ></DL
@@ -525,12 +530,27 @@ page is supposed to be and does not emit errors for byte overflows.</P
 mode instruction.  In this case, only the low order eight bits will be used. 
 Again, no byte overflows will be flagged.</P
 ></DIV
+><DIV
+CLASS="SECTION"
+><HR><H2
+CLASS="SECTION"
+><A
+NAME="AEN62"
+>2.8. BASIC file</A
+></H2
+><P
+>This output type produces an ASCII Color BASIC program. When run, this program will
+READ from DATA statements to POKE program values into RAM. If the execution
+address is non-zero, control will transfer to the program.</P
+><P
+>This is only supported by LWASM, not LWLINK.</P
+></DIV
 ></DIV
 ><DIV
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN62"
+NAME="AEN66"
 ></A
 >Chapter 3. LWASM</H1
 ><P
@@ -542,7 +562,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN65"
+NAME="AEN69"
 >3.1. Command Line Options</A
 ></H2
 ><P
@@ -653,7 +673,10 @@ CLASS="OPTION"
 CLASS="OPTION"
 >ihex</CODE
 >
- for Intel Hex format.</P
+ for Intel Hex format, <CODE
+CLASS="OPTION"
+>basic</CODE
+> for the Color BASIC program format.</P
 ></DD
 ><DT
 ><CODE
@@ -892,7 +915,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN229"
+NAME="AEN234"
 >3.2. Dialects</A
 ></H2
 ><P
@@ -936,7 +959,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN238"
+NAME="AEN243"
 >3.3. Source Format</A
 ></H2
 ><P
@@ -982,7 +1005,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN248"
+NAME="AEN253"
 >3.4. Symbols</A
 ></H2
 ><P
@@ -1010,7 +1033,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN253"
+NAME="AEN258"
 >3.5. Numbers and Expressions</A
 ></H2
 ><P
@@ -1055,7 +1078,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN261"
+NAME="AEN266"
 >3.6. Assembler Directives</A
 ></H2
 ><P
@@ -1068,7 +1091,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN264"
+NAME="AEN269"
 >3.6.1. Data Directives</A
 ></H3
 ><P
@@ -1322,7 +1345,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN381"
+NAME="AEN386"
 >3.6.2. Address Definition</A
 ></H3
 ><P
@@ -1468,7 +1491,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN432"
+NAME="AEN437"
 >3.6.3. Conditional Assembly</A
 ></H3
 ><P
@@ -1643,7 +1666,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN503"
+NAME="AEN508"
 >3.6.4. OS9 Target Directives</A
 ></H3
 ><P
@@ -1710,7 +1733,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN528"
+NAME="AEN533"
 >3.6.5. Miscelaneous Directives</A
 ></H3
 ><P
@@ -1824,7 +1847,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN568"
+NAME="AEN573"
 >3.7. Macros</A
 ></H2
 ><P
@@ -1923,7 +1946,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN591"
+NAME="AEN596"
 >3.8. Structures</A
 ></H2
 ><P
@@ -2016,7 +2039,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN612"
+NAME="AEN617"
 >3.9. Object Files and Sections</A
 ></H2
 ><P
@@ -2233,7 +2256,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN676"
+NAME="AEN681"
 >3.10. Assembler Modes and Pragmas</A
 ></H2
 ><P
@@ -2558,7 +2581,7 @@ of this, "forwardrefmax" has been the default setting since version 4.14 of
 LWTOOLS. To turn it off, use "noforwardrefmax".</P
 ><P
 >Enabling this pragma will cause all forward references to use the
-maximum offset or address size, much the same has EDTASM and other pure
+maximum offset or address size, much the same as EDTASM and other pure
 two pass assemblers do. The side effect is that all line lengths and
 symbol values are fully resolved after the initial parsing pass and the
 amount of work to resolve everything becomes almost nil.</P
@@ -2714,7 +2737,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN832"
+NAME="AEN837"
 >3.12. Cycle Counts</A
 ></H2
 ><P
@@ -2753,7 +2776,7 @@ CLASS="PROGRAMLISTING"
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN838"
+NAME="AEN843"
 ></A
 >Chapter 4. LWLINK</H1
 ><P
@@ -2764,7 +2787,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN841"
+NAME="AEN846"
 >4.1. Command Line Options</A
 ></H2
 ><P
@@ -2962,7 +2985,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN938"
+NAME="AEN943"
 >4.2. Linker Operation</A
 ></H2
 ><P
@@ -3018,7 +3041,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN952"
+NAME="AEN957"
 >4.3. Linking Scripts</A
 ></H2
 ><P
@@ -3225,7 +3248,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN1019"
+NAME="AEN1024"
 >4.4. Format Specific Linking Notes</A
 ></H2
 ><P
@@ -3238,7 +3261,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN1022"
+NAME="AEN1027"
 >4.4.1. OS9 Modules</A
 ></H3
 ><P
@@ -3314,7 +3337,7 @@ offset from U technique.</P
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN1034"
+NAME="AEN1039"
 ></A
 >Chapter 5. Libraries and LWAR</H1
 ><P
@@ -3333,7 +3356,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN1038"
+NAME="AEN1043"
 >5.1. Command Line Options</A
 ></H2
 ><P
@@ -3534,7 +3557,7 @@ by a NULL expression (only an end of expression term).</P
 ><DIV
 CLASS="TABLE"
 ><A
-NAME="AEN1121"
+NAME="AEN1126"
 ></A
 ><P
 ><B
@@ -3606,7 +3629,7 @@ exported symbols or external references.</P
 ><DIV
 CLASS="TABLE"
 ><A
-NAME="AEN1151"
+NAME="AEN1156"
 ></A
 ><P
 ><B
