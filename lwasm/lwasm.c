@@ -167,11 +167,22 @@ lw_expr_t lwasm_evaluate_special(int t, void *ptr, void *priv)
 			line_t *cl = ptr;
 			return lw_expr_copy(cl -> daddr);
 		}
+
+	case lwasm_expr_lineaddrraw:
+		{
+			line_t *cl = ptr;
+			if (cl -> addr)
+				return lw_expr_copy(cl -> addr);
+			else
+				return NULL;
+		}
 	
 	case lwasm_expr_lineaddr:
 		{
 			line_t *cl = ptr;
-			if (cl -> addr)
+			if (cl -> phase)
+				return lw_expr_copy(cl -> phase);
+			else if (cl -> addr)
 				return lw_expr_copy(cl -> addr);
 			else
 				return NULL;
@@ -286,6 +297,8 @@ const char* lwasm_lookup_error(lwasm_errorcode_t error_code)
 		case E_ILL5:					return "Illegal 5 bit offset";
 		case E_INCLUDEBIN_ILL_START: 	return "Start value out of range";
 		case E_INCLUDEBIN_ILL_LENGTH:	return "Length value out of range";
+		case E_NESTED_PHASE:            return "Nested PHASE not supported";
+		case E_MISSING_PHASE:            return "DEPHASE without PHASE";
 
 		case W_ENDSTRUCT_WITHOUT:		return "ENDSTRUCT without STRUCT";
 		case W_DUPLICATE_SECTION:		return "Section flags can only be specified the first time; ignoring duplicate definition";
@@ -1446,6 +1459,10 @@ void lwasm_reduce_line_exprs(line_t *cl)
 	// simplify data address
 	lwasm_reduce_expr(as, cl -> daddr);
 
+	// simplify phase
+	if (cl -> phase)
+		lwasm_reduce_expr(as, cl -> phase);
+
 	// simplify each expression
 	for (i = 0, le = cl -> exprs; le; le = le -> next, i++)
 	{
@@ -1474,4 +1491,6 @@ void lwasm_reduce_line_exprs(line_t *cl)
 	debug_message(as, 100, "Reduce expressions: dlen = %d", cl -> dlen);
 	debug_message(as, 100, "Reduce expressions: addr = %s", lw_expr_print(cl -> addr));
 	debug_message(as, 100, "Reduce expressions: daddr = %s", lw_expr_print(cl -> daddr));
+	if (cl -> phase)
+		debug_message(as, 100, "Reduce expressions: phase = %s", lw_expr_print(cl -> phase));
 }

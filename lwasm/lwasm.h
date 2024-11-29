@@ -50,7 +50,8 @@ enum
 	lwasm_expr_import = 6,			// symbol import entry
 	lwasm_expr_secbase = 7,			// section base address
 	lwasm_expr_linedaddr = 8,		// data address of the line
-	lwasm_expr_linedlen = 9			// data length of the line
+	lwasm_expr_linedlen = 9,		// data length of the line
+	lwasm_expr_lineaddrraw = 10     // address of ref'd line without phase
 };
 
 enum lwasm_output_e
@@ -218,7 +219,9 @@ typedef enum
 	E_ILL5						= 59,
 	E_INCLUDEBIN_ILL_START      = 60,
 	E_INCLUDEBIN_ILL_LENGTH     = 61,
-	
+	E_NESTED_PHASE              = 62,
+	E_MISSING_PHASE             = 63,
+
 	/* warnings must be 1000 or greater */
 
 	W_DUPLICATE_SECTION			= 1000,
@@ -275,6 +278,7 @@ struct line_s
 {
 	lw_expr_t addr;						// assembly address of the line
 	lw_expr_t daddr;					// data address of the line (os9 only)
+	lw_expr_t phase;                    // the "phase" setting (assumed address for assembly)
 	int len;							// the "size" this line occupies (address space wise) (-1 if unknown)
 	int dlen;							// the data "size" this line occupies (-1 if unknown)
 	int minlen;							// minimum length

@@ -980,6 +980,45 @@ PARSEFUNC(pseudo_parse_org)
 	l -> len = 0;
 }
 
+PARSEFUNC(pseudo_parse_phase)
+{
+	lw_expr_t e;
+	
+	l -> len = 0;
+	
+	if (l -> phase)
+	{
+		lwasm_register_error(as, l, E_NESTED_PHASE);
+		return;
+	}
+
+	e = lwasm_parse_expr(as, p);
+	if (!e)
+	{
+		lwasm_register_error(as, l, E_OPERAND_BAD);
+		return;
+	}
+
+	// this should reduce the current line address references before phase is applied
+	lwasm_reduce_expr(as, e);
+
+	l -> phase = e;
+}
+
+PARSEFUNC(pseudo_parse_dephase)
+{
+	l -> len = 0;
+	if (l -> phase)
+	{
+		lw_expr_destroy(l -> phase);
+		l -> phase = NULL;
+	}
+	else
+	{
+		lwasm_register_error(as, l, E_MISSING_PHASE);
+	}
+}
+
 PARSEFUNC(pseudo_parse_reorg)
 {
 	lw_expr_t e = NULL;

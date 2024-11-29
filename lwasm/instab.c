@@ -192,6 +192,14 @@ PARSEFUNC(pseudo_parse_reorg);
 #define pseudo_resolve_reorg NULL
 #define pseudo_emit_reorg NULL
 
+PARSEFUNC(pseudo_parse_phase);
+#define pseudo_resolve_phase NULL
+#define pseudo_emit_phase NULL
+
+PARSEFUNC(pseudo_parse_dephase);
+#define pseudo_resolve_dephase NULL
+#define pseudo_emit_dephase NULL
+
 PARSEFUNC(pseudo_parse_equ);
 #define pseudo_resolve_equ NULL
 #define pseudo_emit_equ NULL
@@ -645,6 +653,8 @@ instab_t instab[] =
 
 	{ "org",		{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_org,		pseudo_resolve_org,				pseudo_emit_org,			lwasm_insn_org},
 	{ "reorg",		{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_reorg,		pseudo_resolve_reorg,			pseudo_emit_reorg,			lwasm_insn_normal},
+	{ "phase",      {   -1,     -1,     -1,     -1 },   pseudo_parse_phase,     pseudo_resolve_phase,           pseudo_emit_phase,          lwasm_insn_normal},
+	{ "dephase",    {   -1,     -1,     -1,     -1 },   pseudo_parse_dephase,   pseudo_resolve_dephase,         pseudo_emit_dephase,        lwasm_insn_normal},
 	{ "equ",		{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_equ,		pseudo_resolve_equ,				pseudo_emit_equ,			lwasm_insn_setsym},
 	{ "=",			{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_equ,		pseudo_resolve_equ,				pseudo_emit_equ,			lwasm_insn_setsym},
 

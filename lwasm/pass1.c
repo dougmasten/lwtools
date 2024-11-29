@@ -148,6 +148,14 @@ void do_pass1(asmstate_t *as)
 			cl -> addr = lw_expr_build(lw_expr_type_oper, lw_expr_oper_plus, cl -> prev -> addr, te);
 			lw_expr_destroy(te);
 			lwasm_reduce_expr(as, cl -> addr);
+			
+			if (cl -> prev -> phase)
+			{
+				te = lw_expr_build(lw_expr_type_special, lwasm_expr_linelen, cl -> prev);
+				cl -> phase = lw_expr_build(lw_expr_type_oper, lw_expr_oper_plus, cl -> prev -> phase, te);
+				lw_expr_destroy(te);
+				lwasm_reduce_expr(as, cl -> phase);
+			}
 //			lw_expr_simplify(cl -> addr, as);
 
 			// set the data address if relevant
@@ -439,8 +447,8 @@ void do_pass1(asmstate_t *as)
 				}
 				else
 				{
-					debug_message(as, 50, "Register symbol %s: %s", cl -> sym, lw_expr_print(cl -> addr));
-					if (!register_symbol(as, cl, cl -> sym, cl -> addr, symbol_flag_none))
+					debug_message(as, 50, "Register symbol %s: %s", cl -> sym, lw_expr_print(cl -> phase ? cl -> phase : cl -> addr));
+					if (!register_symbol(as, cl, cl -> sym, cl -> phase ? cl -> phase : cl -> addr, symbol_flag_none))
 					{
 						// symbol error
 						// lwasm_register_error2(as, cl, E_SYMBOL_BAD, "(%s)", cl -> sym);
