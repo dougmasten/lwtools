@@ -81,6 +81,10 @@ PARSEFUNC(insn_parse_logicmem);
 RESOLVEFUNC(insn_resolve_logicmem);
 EMITFUNC(insn_emit_logicmem);
 
+// these share the imm8 code for resolve and emit
+PARSEFUNC(insn_parse_andcc);
+PARSEFUNC(insn_parse_orcc);
+
 // 8 bit immediate only
 PARSEFUNC(insn_parse_imm8);
 #define insn_resolve_imm8 NULL
@@ -405,7 +409,7 @@ instab_t instab[] =
 	{ "aim",		{	0x02,	0x62,	0x72,	-1	},	insn_parse_logicmem,	insn_resolve_logicmem,			insn_emit_logicmem,			lwasm_insn_is6309},
 	{ "anda",		{	0x94,	0xa4,	0xb4,	0x84},	insn_parse_gen8,		insn_resolve_gen8,				insn_emit_gen8,				lwasm_insn_normal},
 	{ "andb",		{	0xd4,	0xe4,	0xf4,	0xc4},	insn_parse_gen8,		insn_resolve_gen8,				insn_emit_gen8,				lwasm_insn_normal},
-	{ "andcc",		{	0x1c,	-1,		-1,		0x1c},	insn_parse_imm8,		insn_resolve_imm8,				insn_emit_imm8,				lwasm_insn_normal},
+	{ "andcc",		{	0x1c,	-1,		-1,		0x1c},	insn_parse_andcc,		insn_resolve_imm8,				insn_emit_imm8,				lwasm_insn_normal},
 	{ "andd",		{	0x1094,	0x10a4,	0x10b4,	0x1084},insn_parse_gen16,		insn_resolve_gen16,				insn_emit_gen16,			lwasm_insn_is6309},
 	{ "andr",		{	0x1034,	-1,		-1,		-1	},	insn_parse_rtor,		insn_resolve_rtor,				insn_emit_rtor,				lwasm_insn_is6309},
 	{ "asl",		{	0x08,	0x68,	0x78,	-1	},	insn_parse_gen0,		insn_resolve_gen0,				insn_emit_gen0,				lwasm_insn_normal},
@@ -472,7 +476,7 @@ instab_t instab[] =
 	{ "come",		{	0x1143,	-1, 	-1,		-1	},	insn_parse_inh,			insn_resolve_inh,				insn_emit_inh,				lwasm_insn_is6309},
 	{ "comf", 		{	0x1153, -1,		-1,		-1	}, 	insn_parse_inh,			insn_resolve_inh,				insn_emit_inh,				lwasm_insn_is6309},
 	{ "comw",		{	0x1053,	-1,		-1,		-1	},	insn_parse_inh,			insn_resolve_inh,				insn_emit_inh,				lwasm_insn_is6309},
-	{ "cwai",		{	0x3c, 	-1,		-1,		-1	},	insn_parse_imm8,		insn_resolve_imm8,				insn_emit_imm8,				lwasm_insn_normal},
+	{ "cwai",		{	0x3c, 	-1,		-1,		-1	},	insn_parse_andcc,		insn_resolve_imm8,				insn_emit_imm8,				lwasm_insn_normal},
 	
 	{ "daa",		{	0x19,	-1,		-1,		-1	},	insn_parse_inh,			insn_resolve_inh,				insn_emit_inh,				lwasm_insn_normal},
 	{ "dec",		{	0x0a,	0x6a,	0x7a,	-1	},	insn_parse_gen0,		insn_resolve_gen0,				insn_emit_gen0,				lwasm_insn_normal},
@@ -564,7 +568,7 @@ instab_t instab[] =
 	{ "oim",		{	0x01,	0x61,	0x71,	-1	},	insn_parse_logicmem,	insn_resolve_logicmem,			insn_emit_logicmem,			lwasm_insn_is6309},
 	{ "ora",		{	0x9a,	0xaa,	0xba,	0x8a},	insn_parse_gen8,		insn_resolve_gen8,				insn_emit_gen8,				lwasm_insn_normal},
 	{ "orb",		{	0xda,	0xea,	0xfa,	0xca},	insn_parse_gen8,		insn_resolve_gen8,				insn_emit_gen8,				lwasm_insn_normal},
-	{ "orcc",		{	0x1a,	-1,		-1,	0x1a	},	insn_parse_imm8,		insn_resolve_imm8,				insn_emit_imm8,				lwasm_insn_normal},
+	{ "orcc",		{	0x1a,	-1,		-1,	0x1a	},	insn_parse_orcc,		insn_resolve_imm8,				insn_emit_imm8,				lwasm_insn_normal},
 	{ "ord",		{	0x109a,	0x10aa,	0x10ba,	0x108a},insn_parse_gen16,		insn_resolve_gen16,				insn_emit_gen16,			lwasm_insn_is6309},
 	{ "orr",		{	0x1035,	-1,		-1,		-1	},	insn_parse_rtor,		insn_resolve_rtor,				insn_emit_rtor,				lwasm_insn_is6309},
 	

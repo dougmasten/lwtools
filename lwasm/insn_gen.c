@@ -21,6 +21,7 @@ Contains code for parsing general addressing modes (IMM+DIR+EXT+IND)
 
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <lw_expr.h>
 
@@ -632,6 +633,57 @@ PARSEFUNC(insn_parse_imm8)
 		lwasm_register_error(as, l, E_OPERAND_BAD);
 	}
 }
+
+static int parse_flags_string(asmstate_t *as, line_t *l, char **p)
+{
+	static const char *flags = "CVZNIHFE";
+	int rv = 0;
+	char *ptr;
+	
+	while (**p && (ptr = strchr(flags, toupper(**p))))
+	{
+		rv |= 1 << (ptr - flags);
+		(*p)++;
+	}
+	if (rv == 0)
+	{
+		lwasm_register_error(as, l, E_OPERAND_BAD);
+	}
+	return rv;
+}
+
+PARSEFUNC(insn_parse_andcc)
+{
+	int rv;
+	lw_expr_t e;
+	if (**p == '#')
+	{
+		insn_parse_imm8(as, l, p);
+		return;
+	}
+	// we're going to invert the mask for ANDCC/CWAI
+	rv = parse_flags_string(as, l, p) ^ 0xff;
+	e = lw_expr_build(lw_expr_type_int, rv);
+	l -> len = OPLEN(instab[l -> insn].ops[0]) + 1;
+	lwasm_save_expr(l, 0, e);
+}
+
+PARSEFUNC(insn_parse_orcc)
+{
+	int rv;
+	lw_expr_t e;
+	if (**p == '#')
+	{
+		insn_parse_imm8(as, l, p);
+		return;
+	}
+	rv = parse_flags_string(as, l, p);
+	e = lw_expr_build(lw_expr_type_int, rv);
+	l -> len = OPLEN(instab[l -> insn].ops[0]) + 1;
+	lwasm_save_expr(l, 0, e);
+	
+}
+
 
 EMITFUNC(insn_emit_imm8)
 {
