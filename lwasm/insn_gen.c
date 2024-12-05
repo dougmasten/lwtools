@@ -644,6 +644,8 @@ static int parse_flags_string(asmstate_t *as, line_t *l, char **p)
 	{
 		rv |= 1 << (ptr - flags);
 		(*p)++;
+		if (**p == ',')
+			(*p)++;
 	}
 	if (rv == 0)
 	{
