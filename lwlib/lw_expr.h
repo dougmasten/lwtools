@@ -52,6 +52,12 @@ enum
 	lw_expr_oper_neg,			// unary negation, 2's complement
 	lw_expr_oper_com,			// unary 1's complement
 	lw_expr_oper_com8,			// 8 bit complement
+	lw_expr_oper_eq,            // equality
+	lw_expr_oper_ne,            // inequality
+	lw_expr_oper_lt,            // less than
+	lw_expr_oper_le,            // less than or equal
+	lw_expr_oper_gt,            // greater than
+	lw_expr_oper_ge,            // greater than or equal
 	lw_expr_oper_none = 0
 };
 

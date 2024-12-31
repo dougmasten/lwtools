@@ -3055,6 +3055,41 @@ exported symbols or external references.
 <entry>0D</entry>
 <entry>unary 1's complement (^)</entry>
 </row>
+
+<row>
+<entry>0E</entry>
+<entry>unary 1's complement (^), truncated to 8 bit</entry>
+</row>
+
+<row>
+<entry>0F</entry>
+<entry>equality</entry>
+</row>
+
+<row>
+<entry>10</entry>
+<entry>inequality</entry>
+</row>
+
+<row>
+<entry>11</entry>
+<entry>less than</entry>
+</row>
+
+<row>
+<entry>12</entry>
+<entry>less than or equal</entry>
+</row>
+
+<row>
+<entry>13</entry>
+<entry>greater than</entry>
+</row>
+
+<row>
+<entry>14</entry>
+<entry>greater than or equal</entry>
+</row>
 </tbody>
 </tgroup>
 </table>
@@ -3063,6 +3098,10 @@ exported symbols or external references.
 An expression is represented in a postfix manner with both operands for
 binary operators preceding the operator and the single operand for unary
 operators preceding the operator.
+</para>
+
+<para>
+Boolean and relational operators return 0 for false and 1 for true.
 </para>
 
 </chapter>

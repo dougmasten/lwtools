@@ -336,7 +336,31 @@ void lw_expr_print_aux(lw_expr_t E, char **obuf, int *buflen, int *bufloc)
 		case lw_expr_oper_com8:
 			strcat(buf, "COM8 ");
 			break;
-			
+
+		case lw_expr_oper_eq:
+			strcat(buf, "EQ ");
+			break;
+
+		case lw_expr_oper_ne:
+			strcat(buf, "NE ");
+			break;
+
+		case lw_expr_oper_lt:
+			strcat(buf, "LT ");
+			break;
+
+		case lw_expr_oper_le:
+			strcat(buf, "LE ");
+			break;
+
+		case lw_expr_oper_gt:
+			strcat(buf, "GT ");
+			break;
+
+		case lw_expr_oper_ge:
+			strcat(buf, "GE ");
+			break;
+
 		default:
 			strcat(buf, "OPER ");
 			break;
@@ -806,6 +830,30 @@ again:
 			tr = E -> operands -> p -> value || E -> operands -> next -> p -> value;
 			break;
 		
+		case lw_expr_oper_eq:
+			tr = E -> operands -> p -> value == E -> operands -> next -> p -> value;
+			break;
+		
+		case lw_expr_oper_ne:
+			tr = E -> operands -> p -> value != E -> operands -> next -> p -> value;
+			break;
+		
+		case lw_expr_oper_lt:
+			tr = E -> operands -> p -> value < E -> operands -> next -> p -> value;
+			break;
+		
+		case lw_expr_oper_le:
+			tr = E -> operands -> p -> value <= E -> operands -> next -> p -> value;
+			break;
+		
+		case lw_expr_oper_gt:
+			tr = E -> operands -> p -> value > E -> operands -> next -> p -> value;
+			break;
+		
+		case lw_expr_oper_ge:
+			tr = E -> operands -> p -> value >= E -> operands -> next -> p -> value;
+			break;
+		
 		}
 		
 		while (E -> operands)
@@ -1262,6 +1310,14 @@ lw_expr_t lw_expr_parse_expr(char **p, void *priv, int prec)
 		{ lw_expr_oper_bwor, "|", 50 },
 		{ lw_expr_oper_bwor, "!", 50 },
 		{ lw_expr_oper_bwxor, "^", 50 },
+		
+		{ lw_expr_oper_eq, "==", 55 },
+		{ lw_expr_oper_ne, "!=", 55 },
+		{ lw_expr_oper_ne, "<>", 55 },
+		{ lw_expr_oper_lt, "<", 60 },
+		{ lw_expr_oper_le, "<=", 60 },
+		{ lw_expr_oper_gt, ">", 60 },
+		{ lw_expr_oper_ge, ">=", 60 },
 		
 		{ lw_expr_oper_none, "", 0 }
 	};

@@ -255,6 +255,7 @@ next_iter:
 		{
 			if (n -> term -> value == LW_OPER_NEG
 				|| n -> term -> value == LW_OPER_COM
+				|| n -> term -> value == LW_OPER_COM8
 				)
 			{
 				// unary operator
@@ -269,6 +270,10 @@ next_iter:
 					else if (n -> term -> value == LW_OPER_COM)
 					{
 						n -> prev -> term -> value = ~(n -> prev -> term -> value);
+					}
+					else if (n -> term -> value == LW_OPER_COM8)
+					{
+						n -> prev -> term -> value = ~(n -> prev -> term -> value) & 0xff;
 					}
 					n -> prev -> next = n -> next;
 					if (n -> next)
@@ -337,6 +342,30 @@ next_iter:
 
 					case LW_OPER_OR:
 						n -> prev -> prev -> term -> value = (n -> prev -> term -> value || n -> prev -> prev -> term -> value) ? 1 : 0;
+						break;
+
+					case LW_OPER_EQ:
+						n -> prev -> prev -> term -> value = (n -> prev -> term -> value == n -> prev -> prev -> term -> value) ? 1 : 0;
+						break;
+
+					case LW_OPER_NE:
+						n -> prev -> prev -> term -> value = (n -> prev -> term -> value != n -> prev -> prev -> term -> value) ? 1 : 0;
+						break;
+
+					case LW_OPER_LT:
+						n -> prev -> prev -> term -> value = (n -> prev -> term -> value < n -> prev -> prev -> term -> value) ? 1 : 0;
+						break;
+
+					case LW_OPER_LE:
+						n -> prev -> prev -> term -> value = (n -> prev -> term -> value <= n -> prev -> prev -> term -> value) ? 1 : 0;
+						break;
+
+					case LW_OPER_GT:
+						n -> prev -> prev -> term -> value = (n -> prev -> term -> value > n -> prev -> prev -> term -> value) ? 1 : 0;
+						break;
+
+					case LW_OPER_GE:
+						n -> prev -> prev -> term -> value = (n -> prev -> term -> value >= n -> prev -> prev -> term -> value) ? 1 : 0;
 						break;
 
 					default:

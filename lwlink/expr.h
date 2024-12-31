@@ -52,7 +52,13 @@ Definitions for expression evaluator
 #define LW_OPER_OR		11	// boolean OR
 #define LW_OPER_NEG		12	// - unary negation (2's complement)
 #define LW_OPER_COM		13	// ^ unary 1's complement
-
+#define LW_OPER_COM8    14  // 8 bit unary 1's complement
+#define LW_OPER_EQ      15  // equality
+#define LW_OPER_NE      16  // inequality
+#define LW_OPER_LT      17  // less than
+#define LW_OPER_LE      18  // less than or equality
+#define LW_OPER_GT      19  // greater than
+#define LW_OPER_GE      20  // greater than or equality
 
 // term structure
 typedef struct lw_expr_term_s
