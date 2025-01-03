@@ -28,6 +28,11 @@ is removed. Also, the special "helper" makefile and directory is removed.
 Also, as of this writing, the latest "official" release was for gcc 4.3.4
 which does not build on 64 bit linux.
 
+The only difference between the 4.6.4-9 and 4.6.4-10 patches is that the
+4.6.4-10 patch has updates to allow it to build with gcc-14.2 under Debian
+Trixie. Update contributed by Ciaran Anscomb (sixxie). The 4.6.4-9 patch is
+retained in case the updates introduce any incompatibilities.
+
 In the event you have used the "official" gcc6809 with the default as6809
 assembler that comes with it, you should be aware that while lwasm is mostly
 compatible with it syntax wise, there are differences, particularly in
