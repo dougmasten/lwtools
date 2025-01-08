@@ -134,9 +134,11 @@ void display_map(void)
 		}
 	}
 	
-	for (ce = slist; ce; ce = ce -> next)
+	for (ce = slist; ce; ce = ne)
 	{
+		ne = ce -> next;
 		fprintf(of, "Symbol: %s (%s) = %04X\n", sanitize_symbol(ce -> name), ce -> fn, ce -> addr);
+		lw_free(ce);
 	}
 
 	if (!std)
