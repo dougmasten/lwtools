@@ -936,6 +936,23 @@ void write_code_obj(asmstate_t *as, FILE *of)
 			as -> cl = &tl;
 			lwasm_reduce_expr(as, te);
 			as -> exportcheck = 0;
+			{
+				lwasm_error_t *ne;
+				for (lwasm_error_t *e = tl.err; e; e = ne)
+				{
+					lw_free(e -> mess);
+					ne = e -> next;
+					lw_free(e);
+				}
+				tl.err = NULL;
+				for (lwasm_error_t *e = tl.warn; e; e = ne)
+				{
+					lw_free(e -> mess);
+					ne = e -> next;
+					lw_free(e);
+				}
+				tl.warn = NULL;
+			}
 			as -> cl = NULL;
 			if (!lw_expr_istype(te, lw_expr_type_int))
 			{
