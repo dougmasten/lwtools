@@ -631,6 +631,7 @@ void insn_resolve_indexed_aux(asmstate_t *as, line_t *l, int force, int elen)
 					{
 						l -> lint = 1;
 						l -> pb = (l -> pb & 0x80) ? 0x9C : 0x8C;
+						lw_expr_destroy(e2);
 						return;
 					}
 				}
