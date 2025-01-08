@@ -231,7 +231,10 @@ void setup_script()
 		
 		// ignore blank lines and comments
 		if (!*ptr || *ptr == '#' || *ptr == ';')
+		{
+			lw_free(line);
 			continue;
+		}
 		
 		for (ptr = line; *ptr && !isspace(*ptr); ptr++)
 			/* do nothing */ ;
