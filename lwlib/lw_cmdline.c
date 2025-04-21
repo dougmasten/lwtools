@@ -181,7 +181,8 @@ static void lw_cmdline_usage(struct lw_cmdline_parser *parser, char *name)
 			}
 			else
 			{
-				printf(" [--%s%s=%s%s]", 
+				printf(" [%s%s%s=%s%s]",
+					(llist[i] -> flags & lw_cmdline_opt_single) ? "-" : "--", 
 					llist[i] -> name,
 					(llist[i] -> flags & lw_cmdline_opt_optional) ? "[" : "",
 					llist[i] -> arg,
@@ -204,7 +205,7 @@ static void lw_cmdline_usage(struct lw_cmdline_parser *parser, char *name)
 			}
 			else
 			{
-				printf(" [--%s]", llist[i] -> name);
+				printf(" [%s%s]", (llist[i] -> flags & lw_cmdline_opt_single) ? "-" : "--", llist[i] -> name);
 			}
 			col += t;
 		}
@@ -297,7 +298,7 @@ static void lw_cmdline_help(struct lw_cmdline_parser *parser, char *name)
 		if (llist[i] -> name && !(llist[i] -> flags & lw_cmdline_opt_doc))
 		{
 			col += 2 + strlen(llist[i] -> name);
-			printf("--%s", llist[i] -> name);
+			printf("%s%s", (llist[i] -> flags & lw_cmdline_opt_single) ? "-" : "--", llist[i] -> name);
 		}
 		if (llist[i] -> arg)
 		{
@@ -439,6 +440,30 @@ int lw_cmdline_parse(struct lw_cmdline_parser *parser, int argc, char **argv, un
 			goto do_help;
 		if (argv[i][cch] == 'V')
 			goto do_version;
+		/* first look for single dash long options */
+		if (cch == 1)
+		{
+			for (j = 0; parser -> options[j].name; j++)
+			{
+				if (parser -> options[j].flags & lw_cmdline_opt_single)
+				{
+					int m;
+					for (m = 0; parser -> options[j].name[m] && argv[i][cch + m] && parser -> options[j].name[m] == argv[i][cch + m]; m++)
+						if (argv[i][cch + m] == '=')
+							break;
+					if (!parser -> options[j].name[m])
+					{
+						// we have a "single long" option here
+						tstr = argv[i] + cch + m;
+						if (argv[i][cch] == '=')
+							tstr += 1;
+						cch = 0;
+						i++;
+						goto common;
+					}
+				}
+			}
+		}
 		/* look up key */
 		for (j = 0; parser -> options[j].name || parser -> options[j].key || parser -> options[j].doc; j++)
 			if (parser -> options[j].key == argv[i][cch])
@@ -476,6 +501,9 @@ int lw_cmdline_parse(struct lw_cmdline_parser *parser, int argc, char **argv, un
 		cch = j;
 		for (j = 0; parser -> options[j].name || parser -> options[j].key || parser -> options[j].doc; j++)
 		{
+			// skip single dash longs
+			if (parser -> options[j].flags & lw_cmdline_opt_single)
+				continue;
 			if (parser -> options[j].name && strcmp(parser -> options[j].name, tstr) == 0)
 				break;
 		}

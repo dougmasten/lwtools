@@ -47,6 +47,7 @@ enum
 	lw_cmdline_opt_hidden = 2,
 /*	lw_cmdline_opt_alias = 4,*/
 /*	lw_cmdline_opt_nousage = 0x10,*/
+	lw_cmdline_opt_single = 0x20,
 	lw_cmdline_opt_doc = 0x80
 };
 
