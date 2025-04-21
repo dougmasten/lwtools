@@ -45,6 +45,7 @@ lw_stringlist_t input_files;
 lw_stringlist_t includedirs;
 lw_stringlist_t sysincludedirs;
 lw_stringlist_t macrolist;
+lw_stringlist_t sysmacrolist;
 
 /* various flags */
 int trigraphs = 0;
@@ -58,7 +59,11 @@ static struct lw_cmdline_options options[] =
 	{ "includedir",	'I',	"PATH",		0,							"Add entry to the user include path" },
 	{ "sincludedir", 'S',	"PATH",		0,							"Add entry to the system include path" },
 	{ "define", 	'D',	"SYM[=VAL]",0, 							"Automatically define SYM to be VAL (or 1)"},
+	{ "undefine",   'U',    "SYM",      0,                          "Undefine SYM"},
 	{ "trigraphs",	0x100,	NULL,		0,							"Enable interpretation of trigraphs" },
+	{ "language",   'x',    "LANG",     0,                          "Specify language; currently ignored" },
+	{ "nostdinc",   0x101,  NULL,       lw_cmdline_opt_single,      "Disable standard include paths" },
+	{ "undef",      0x102,  NULL,       lw_cmdline_opt_single,      "Do not define any standard system or language macros" },
 	{ 0 }
 };
 
@@ -71,9 +76,23 @@ static int parse_opts(int key, char *arg, void *state)
 			do_error("Output file specified more than once.");
 		output_file = arg;
 		break;
-		
+
+	case 'x':
+		break;
+
 	case 0x100:
 		trigraphs = 1;
+		break;
+
+	// -nostdinc
+	case 0x101:
+		lw_stringlist_destroy(sysincludedirs);
+		sysincludedirs = lw_stringlist_create();
+		break;
+
+	case 0x102:
+		lw_stringlist_destroy(sysmacrolist);
+		sysmacrolist = lw_stringlist_create();
 		break;
 
 	case 'I':
@@ -87,7 +106,29 @@ static int parse_opts(int key, char *arg, void *state)
 	case 'D':
 		lw_stringlist_addstring(macrolist, arg);
 		break;
-		
+
+	case 'U':
+		{
+			lw_stringlist_t *nl;
+			char *s;
+			int c;
+			nl = lw_stringlist_create();
+			lw_stringlist_reset(macrolist);
+			while ((s = lw_stringlist_current(macrolist)))
+			{
+				lw_stringlist_addstring(nl, s);
+				for (c = 0; arg[c] && s[c] && arg[c] == s[c]; c++)
+					if (s[c] == '=' || arg[c] == '=')
+						break;
+				if (!arg[c] && (!s[c] || s[c] == '='))
+					continue;
+				lw_stringlist_next(macrolist);
+			}
+			lw_stringlist_destroy(macrolist);
+			macrolist = nl;
+		}
+		break;
+
 	case lw_cmdline_key_end:
 		break;
 	
@@ -204,6 +245,13 @@ int process_file(const char *fn)
 	}
 
 	/* set up pre-defined macros */
+	lw_stringlist_reset(sysmacrolist);
+	for (tstr = lw_stringlist_current(sysmacrolist); tstr; tstr = lw_stringlist_next(sysmacrolist))
+	{
+		preproc_add_macro(pp, tstr);
+	}
+
+	/* set up command line defined macros */
 	lw_stringlist_reset(macrolist);
 	for (tstr = lw_stringlist_current(macrolist); tstr; tstr = lw_stringlist_next(macrolist))
 	{
