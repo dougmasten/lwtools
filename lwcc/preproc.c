@@ -738,8 +738,9 @@ static void dir_pragma(struct preproc_info *pp)
 		return;
 	}
 	
-	preproc_throw_warning(pp, "Unsupported #pragma");
-	skip_eol(pp);
+	// for a pragma not handled by the preprocessor, pass it through; we unget
+	// as an identifier to prevent a loop processing the pragma again
+	preproc_unget_token(pp, token_create(TOK_IDENT, "#pragma", pp -> lineno, pp -> column, pp -> fn));
 }
 
 struct { char *name; void (*fn)(struct preproc_info *); } dirlist[] =
