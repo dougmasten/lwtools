@@ -13,11 +13,13 @@
   <ItemGroup>
     <ClCompile Include="..\lwlib\lw_alloc.c" />
     <ClCompile Include="..\lwlib\lw_cmdline.c" />
+    <ClCompile Include="..\lwlib\lw_dict.c" />
     <ClCompile Include="..\lwlib\lw_error.c" />
     <ClCompile Include="..\lwlib\lw_expr.c" />
     <ClCompile Include="..\lwlib\lw_free.c" />
     <ClCompile Include="..\lwlib\lw_realloc.c" />
     <ClCompile Include="..\lwlib\lw_stack.c" />
+    <ClCompile Include="..\lwlib\lw_strbuf.c" />
     <ClCompile Include="..\lwlib\lw_string.c" />
     <ClCompile Include="..\lwlib\lw_stringlist.c" />
     <ClCompile Include="..\lwlib\lw_win.c" />
