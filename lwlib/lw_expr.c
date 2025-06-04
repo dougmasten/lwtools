@@ -1325,23 +1325,23 @@ lw_expr_t lw_expr_parse_expr(char **p, void *priv, int prec)
 		{ lw_expr_oper_mod, "%", 150 },
 		{ lw_expr_oper_intdiv, "\\", 150 },
 		
-		{ lw_expr_oper_and, "&&", 25 },
+		{ lw_expr_oper_and, "&&", 26 }, // and higher than or due to and behaving like multiplication and or addition
 		{ lw_expr_oper_or, "||", 25 },
 		
-		{ lw_expr_oper_bwand, "&", 50 },
+		{ lw_expr_oper_bwand, "&", 51 }, // and higher than or due to above note
 		{ lw_expr_oper_bwor, "|", 50 },
 		{ lw_expr_oper_bwor, "!", 50 },
 		{ lw_expr_oper_bwxor, "^", 50 },
 
 		{ lw_expr_oper_bytepaste, "::", 45 },
 
-		{ lw_expr_oper_eq, "==", 55 },
-		{ lw_expr_oper_ne, "!=", 55 },
-		{ lw_expr_oper_ne, "<>", 55 },
-		{ lw_expr_oper_lt, "<", 60 },
-		{ lw_expr_oper_le, "<=", 60 },
-		{ lw_expr_oper_gt, ">", 60 },
-		{ lw_expr_oper_ge, ">=", 60 },
+		{ lw_expr_oper_eq, "==", 30 },
+		{ lw_expr_oper_ne, "!=", 30 },
+		{ lw_expr_oper_ne, "<>", 30 },
+		{ lw_expr_oper_lt, "<", 30 },
+		{ lw_expr_oper_le, "<=", 30 },
+		{ lw_expr_oper_gt, ">", 30 },
+		{ lw_expr_oper_ge, ">=", 30 },
 		
 		{ lw_expr_oper_none, "", 0 }
 	};
