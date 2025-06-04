@@ -58,6 +58,8 @@ enum
 	lw_expr_oper_le,            // less than or equal
 	lw_expr_oper_gt,            // greater than
 	lw_expr_oper_ge,            // greater than or equal
+	// operators below here will not be emitted in the actual expression
+	lw_expr_oper_bytepaste,     // past LSB of both operands into a 16 bit value
 	lw_expr_oper_none = 0
 };
 

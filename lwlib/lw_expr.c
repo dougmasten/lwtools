@@ -217,14 +217,36 @@ lw_expr_t lw_expr_build_aux(int exprtype, va_list args)
 			te2 = va_arg(args, lw_expr_t);
 		else
 			te2 = NULL;
-		
-		r -> type = lw_expr_type_oper;
-		r -> value = t;
-		lw_expr_add_operand(r, te1);
-		if (te2)
-			lw_expr_add_operand(r, te2);
+
+		if (t == lw_expr_oper_bytepaste)
+		{
+			// byte paste is literally this:
+			// (((te1 & 0xff) * 256) + (te2 & 0xff))
+			// so that is what will be generated
+			r = lw_expr_build(lw_expr_type_oper, lw_expr_oper_plus,
+				lw_expr_build(lw_expr_type_oper, lw_expr_oper_times,
+					lw_expr_build(lw_expr_type_oper, lw_expr_oper_bwand,
+						te1,
+						lw_expr_build(lw_expr_type_int, 0xff)
+					),
+					lw_expr_build(lw_expr_type_int, 0x100)
+				),
+				lw_expr_build(lw_expr_type_oper, lw_expr_oper_bwand,
+					te2,
+					lw_expr_build(lw_expr_type_int, 0xff)
+				)
+			);
+		}
+		else
+		{
+			r -> type = lw_expr_type_oper;
+			r -> value = t;
+			lw_expr_add_operand(r, te1);
+			if (te2)
+				lw_expr_add_operand(r, te2);
+		}
 		break;
-	
+
 	default:
 		lw_error("Invalid expression type specified to lw_expr_build");
 	}
@@ -1310,7 +1332,9 @@ lw_expr_t lw_expr_parse_expr(char **p, void *priv, int prec)
 		{ lw_expr_oper_bwor, "|", 50 },
 		{ lw_expr_oper_bwor, "!", 50 },
 		{ lw_expr_oper_bwxor, "^", 50 },
-		
+
+		{ lw_expr_oper_bytepaste, "::", 45 },
+
 		{ lw_expr_oper_eq, "==", 55 },
 		{ lw_expr_oper_ne, "!=", 55 },
 		{ lw_expr_oper_ne, "<>", 55 },
