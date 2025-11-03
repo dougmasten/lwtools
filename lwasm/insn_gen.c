@@ -82,6 +82,10 @@ indexed:
 			l -> lint2 = 0;
 			(*p)++;
 		}
+		else
+		{
+			l -> lint2 = -1;
+		}
 	}
 	else if (**p == '>')
 	{
