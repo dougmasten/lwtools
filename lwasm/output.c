@@ -1044,7 +1044,7 @@ void write_code_obj(asmstate_t *as, FILE *of)
 		writebytes(buf, 2, 1, of);
 		
 		
-		if (!(s -> flags & section_flag_bss) && !(s -> flags & section_flag_constant))
+		if ((s -> obytes) && !(s -> flags & section_flag_bss) && !(s -> flags & section_flag_constant))
 		{
 			writebytes(s -> obytes, s -> oblen, 1, of);
 		}
