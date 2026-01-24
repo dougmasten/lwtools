@@ -2678,7 +2678,7 @@ attributes, the module revision number, the data size (bss), and the
 execution offset.  These are all either calculated or default to reasonable
 values.</para>
 
-<para>The data size is calcuated as the sum of all sections named "bss" or
+<para>The data size is calculated as the sum of all sections named "bss" or
 ".bss" in all object files that are linked together.</para>
 
 <para>The execution offset is calculated from the address of the special
