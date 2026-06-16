@@ -420,7 +420,7 @@ void insn_parse_indexed_aux(asmstate_t *as, line_t *l, char **p)
 		e2 = lw_expr_build(lw_expr_type_special, lwasm_expr_linelen, l);
 		e1 = lw_expr_build(lw_expr_type_oper, lw_expr_oper_minus, e, e2);
 		lw_expr_destroy(e2);
-		e2 = lw_expr_build(lw_expr_type_oper, lw_expr_oper_minus, e1, l -> addr);
+		e2 = lw_expr_build(lw_expr_type_oper, lw_expr_oper_minus, e1, l -> phase ? l -> phase : l -> addr);
 		lw_expr_destroy(e1);
 		lwasm_save_expr(l, 0, e2);
 		if (l -> lint == 1)
