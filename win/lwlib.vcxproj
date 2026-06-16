@@ -22,16 +22,20 @@
     <ClCompile Include="..\lwlib\lw_strbuf.c" />
     <ClCompile Include="..\lwlib\lw_string.c" />
     <ClCompile Include="..\lwlib\lw_stringlist.c" />
+    <ClCompile Include="..\lwlib\lw_strpool.c" />
     <ClCompile Include="..\lwlib\lw_win.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\lwlib\lw_alloc.h" />
     <ClInclude Include="..\lwlib\lw_cmdline.h" />
+    <ClInclude Include="..\lwlib\lw_dict.h" />
     <ClInclude Include="..\lwlib\lw_error.h" />
     <ClInclude Include="..\lwlib\lw_expr.h" />
     <ClInclude Include="..\lwlib\lw_stack.h" />
+    <ClInclude Include="..\lwlib\lw_strbuf.h" />
     <ClInclude Include="..\lwlib\lw_string.h" />
     <ClInclude Include="..\lwlib\lw_stringlist.h" />
+    <ClInclude Include="..\lwlib\lw_strpool.h" />
     <ClInclude Include="..\lwlib\lw_version.h" />
     <ClInclude Include="..\lwlib\lw_win.h" />
   </ItemGroup>
