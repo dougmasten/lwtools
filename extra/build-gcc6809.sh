@@ -5,14 +5,21 @@
 # This script will optionally download, then patch and build GCC and
 # newlib for the m6809 target, using lwtools as the assembler/linker.
 #
+# Two GCC versions are supported (selectable via --gcc-version):
+#   - 4.6.4:           the legacy lwtools toolchain.  Builds cc1; the
+#                      backend ICEs partway through libgcc.
+#   - 9.5.0 (default): forward-port.  cc1 + libgcc + newlib all working.
+#
 # Usage:
-#   ./build-gcc6809.sh [--fetch] [--prefix=/usr/local/m6809] [--clean] [--reconfigure]
+#   ./build-gcc6809.sh [--gcc-version=4.6.4|9.5.0] [--fetch] \
+#                      [--prefix=/usr/local/m6809] [--clean] [--reconfigure]
 #
 # Prerequisites:
 #   - lwtools (lwasm, lwlink, lwar) built and in PATH or in ../lwasm etc.
 #   - GNU make, gawk, bison, flex, makeinfo (texinfo)
 #   - GMP, MPFR, MPC (fetched automatically via GCC's download_prerequisites)
-#   - A working C compiler for the host
+#   - A working C compiler for the host (g++-15 from Homebrew when building
+#     GCC 9.5.0 on arm64 Darwin — see notes below).
 #
 # This script is resumable: re-run it after installing missing prerequisites
 # and it will pick up where the previous run left off. Use --clean to start
@@ -20,23 +27,10 @@
 
 set -e
 
-# --- Configurable versions and patch levels ---
-GCC_VERSION=4.6.4
-GCC_PATCH_LEVEL=11
+# --- Defaults ---
+GCC_VERSION=9.5.0
 NEWLIB_VERSION=4.6.0.20260123
 NEWLIB_PATCH_LEVEL=1
-
-# --- Derived names ---
-GCC_TARBALL=gcc-${GCC_VERSION}.tar.bz2
-GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/${GCC_TARBALL}
-GCC_SRCDIR=gcc-${GCC_VERSION}
-GCC_PATCH=gcc6809lw-${GCC_VERSION}-${GCC_PATCH_LEVEL}.patch
-
-NEWLIB_TARBALL=newlib-${NEWLIB_VERSION}.tar.gz
-NEWLIB_URL=https://sourceware.org/pub/newlib/${NEWLIB_TARBALL}
-NEWLIB_SRCDIR=newlib-${NEWLIB_VERSION}
-NEWLIB_PATCH=newlib6809lw-$(echo ${NEWLIB_VERSION} | sed 's/\..*//')-${NEWLIB_PATCH_LEVEL}.patch
-
 PREFIX=/usr/local/m6809
 FETCH=no
 CLEAN=no
@@ -45,6 +39,9 @@ RECONFIGURE=no
 # --- Parse arguments ---
 for arg in "$@"; do
 	case "$arg" in
+		--gcc-version=*)
+			GCC_VERSION="${arg#--gcc-version=}"
+			;;
 		--fetch)
 			FETCH=yes
 			;;
@@ -58,8 +55,9 @@ for arg in "$@"; do
 			RECONFIGURE=yes
 			;;
 		--help|-h)
-			echo "Usage: $0 [--fetch] [--prefix=DIR] [--clean] [--reconfigure]"
+			echo "Usage: $0 [--gcc-version=VER] [--fetch] [--prefix=DIR] [--clean] [--reconfigure]"
 			echo ""
+			echo "  --gcc-version  GCC version to build (4.6.4 or 9.5.0; default: 9.5.0)"
 			echo "  --fetch        Download GCC and newlib source tarballs"
 			echo "  --prefix       Installation prefix (default: /usr/local/m6809)"
 			echo "  --clean        Remove build and unpacked source dirs before building"
@@ -73,8 +71,61 @@ for arg in "$@"; do
 	esac
 done
 
+# --- Version-specific knobs ---
+case "${GCC_VERSION}" in
+	4.6.4)
+		GCC_PATCH_LEVEL=11
+		GCC_TARBALL_EXT=tar.bz2
+		TARGET_TRIPLE=m6809-unknown
+		HOST_FIX_AARCH64_DARWIN=inline   # patched via shell, not in .patch
+		HOST_FIX_16K_PAGES=yes
+		HOST_CXX_OVERRIDE=
+		HOST_USES_SYSTEM_ZLIB=no
+		EXTRA_CONFIGURE=--enable-obsolete
+		NEWLIB_TARGET_CFLAGS=          # 4.6 ICEs in libgcc before reaching newlib
+		;;
+	9.5.0)
+		GCC_PATCH_LEVEL=1
+		GCC_TARBALL_EXT=tar.xz
+		TARGET_TRIPLE=m6809-unknown-none
+		HOST_FIX_AARCH64_DARWIN=in_patch # gcc6809lw-9.5.0-1.patch carries it
+		HOST_FIX_16K_PAGES=no            # GCC 9 already uses aligned(16384)
+		HOST_CXX_OVERRIDE=g++-15         # libc++ <map> + safe-ctype clash on arm64 Darwin
+		HOST_USES_SYSTEM_ZLIB=yes        # bundled zlib's fdopen macro vs macOS stdio.h
+		EXTRA_CONFIGURE="--disable-libstdcxx --disable-multilib --disable-lto --disable-decimal-float --disable-libquadmath --with-system-zlib"
+		# The plus_constant ICE that gcc6809lw-9.5.0-1.patch fixes used to
+		# block libm/math/ef_fmod.c at -O2.  With the fix in place that
+		# specific issue is gone, but two other (unrelated, real)
+		# limitations still bite at higher optimisation:
+		#   - -O2 inlines hash_bigkey.c:__big_split into a frame >32 KiB,
+		#     which the 6809 backend correctly refuses (16-bit signed S
+		#     offsets max out near 32640 bytes).
+		#   - -Os tightens code layout enough that the m6809 backend
+		#     picks the short 'bra' form for a branch that exceeds the
+		#     +/-127-byte range, and lwasm rejects the assembly.
+		# Both are tractable but out of scope for the toolchain bring-up.
+		# -O0 sidesteps both and produces working libc.a / libm.a / libg.a.
+		NEWLIB_TARGET_CFLAGS=-O0
+		;;
+	*)
+		echo "Error: unsupported --gcc-version=${GCC_VERSION} (try 4.6.4 or 9.5.0)" >&2
+		exit 1
+		;;
+esac
+
+# --- Derived names ---
+GCC_TARBALL=gcc-${GCC_VERSION}.${GCC_TARBALL_EXT}
+GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/${GCC_TARBALL}
+GCC_SRCDIR=gcc-${GCC_VERSION}
+GCC_PATCH=gcc6809lw-${GCC_VERSION}-${GCC_PATCH_LEVEL}.patch
+
+NEWLIB_TARBALL=newlib-${NEWLIB_VERSION}.tar.gz
+NEWLIB_URL=https://sourceware.org/pub/newlib/${NEWLIB_TARBALL}
+NEWLIB_SRCDIR=newlib-${NEWLIB_VERSION}
+NEWLIB_PATCH=newlib6809lw-$(echo ${NEWLIB_VERSION} | sed 's/\..*//')-${NEWLIB_PATCH_LEVEL}.patch
+
 SCRIPTDIR=$(cd "$(dirname "$0")" && pwd)
-BUILDDIR=${SCRIPTDIR}/gcc-build
+BUILDDIR=${SCRIPTDIR}/gcc-build-${GCC_VERSION}
 
 # --- Optional clean ---
 if [ "${CLEAN}" = "yes" ]; then
@@ -91,9 +142,12 @@ for tool in make gawk bison flex makeinfo patch tar curl; do
 		missing="${missing} ${tool}"
 	fi
 done
+if [ -n "${HOST_CXX_OVERRIDE}" ] && ! command -v "${HOST_CXX_OVERRIDE}" >/dev/null 2>&1; then
+	missing="${missing} ${HOST_CXX_OVERRIDE}"
+fi
 if [ -n "${missing}" ]; then
 	echo "Error: missing required tools:${missing}" >&2
-	echo "On macOS: brew install gawk bison flex texinfo" >&2
+	echo "On macOS: brew install gawk bison flex texinfo gcc" >&2
 	echo "On Debian/Ubuntu: apt install build-essential gawk bison flex texinfo" >&2
 	exit 1
 fi
@@ -146,7 +200,7 @@ done
 # Dry-run patch first so a failure leaves the tree untouched and re-runnable.
 if [ ! -d "${GCC_SRCDIR}" ]; then
 	echo "Unpacking ${GCC_TARBALL}..."
-	tar xjf "${GCC_TARBALL}"
+	tar xf "${GCC_TARBALL}"
 fi
 
 if [ ! -f "${GCC_SRCDIR}/.patched-${GCC_PATCH_LEVEL}" ]; then
@@ -165,16 +219,12 @@ fi
 # --- Host-specific patches (applied to the unpacked GCC tree) ---
 # GCC 4.6.4 predates Apple Silicon and has no aarch64-darwin host_hooks,
 # which causes cc1 to fail linking with "Undefined symbols: _host_hooks".
-# Add a trivial host-hook file and wire it into config.host.
-if [ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "arm64" ] && \
+# Add a trivial host-hook file and wire it into config.host.  GCC 9.5.0
+# carries the same fix in its .patch file, so this block is a no-op there.
+if [ "${HOST_FIX_AARCH64_DARWIN}" = "inline" ] && \
+   [ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "arm64" ] && \
    [ ! -f "${GCC_SRCDIR}/.aarch64-darwin-host-hooks" ]; then
 	echo "Adding aarch64-darwin host_hooks to GCC source tree..."
-	# Apple Silicon uses 16 KiB pages; the default 4 KiB alignment of
-	# pch_address_space in host-darwin.c trips an assertion in cc1.
-	# Bump alignment so the assertion holds on both 4 K and 16 K hosts.
-	sed -i.bak 's/__attribute__((aligned (4096)))/__attribute__((aligned (16384)))/' \
-		"${GCC_SRCDIR}/gcc/config/host-darwin.c"
-	rm -f "${GCC_SRCDIR}/gcc/config/host-darwin.c.bak"
 	mkdir -p "${GCC_SRCDIR}/gcc/config/aarch64"
 	cat > "${GCC_SRCDIR}/gcc/config/aarch64/host-aarch64-darwin.c" <<'EOF'
 /* aarch64-darwin host-specific hook definitions. */
@@ -211,6 +261,19 @@ EOF
 	touch "${GCC_SRCDIR}/.aarch64-darwin-host-hooks"
 	# Force reconfigure so the new config.host entry takes effect.
 	RECONFIGURE=yes
+fi
+
+# Apple Silicon uses 16 KiB pages; GCC 4.6.4's host-darwin.c aligns
+# pch_address_space to 4 KiB, tripping an assertion in cc1.  GCC 9.5.0
+# already aligns to 16 KiB so this only applies to the older build.
+if [ "${HOST_FIX_16K_PAGES}" = "yes" ] && \
+   [ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "arm64" ] && \
+   [ ! -f "${GCC_SRCDIR}/.16k-page-alignment" ]; then
+	echo "Bumping pch_address_space alignment to 16 KiB for Apple Silicon..."
+	sed -i.bak 's/__attribute__((aligned (4096)))/__attribute__((aligned (16384)))/' \
+		"${GCC_SRCDIR}/gcc/config/host-darwin.c"
+	rm -f "${GCC_SRCDIR}/gcc/config/host-darwin.c.bak"
+	touch "${GCC_SRCDIR}/.16k-page-alignment"
 fi
 
 # --- Locate GCC prerequisites (GMP, MPFR, MPC) ---
@@ -263,6 +326,17 @@ if [ ! -f "${NEWLIB_SRCDIR}/.patched-${NEWLIB_PATCH_LEVEL}" ]; then
 	cd "${SCRIPTDIR}"
 fi
 
+# Teach newlib's top-level config.sub about m6809.  Newlib's configure
+# resolves config.sub via the real source path (not through the GCC
+# tree symlink), so GCC's already-patched config.sub doesn't apply here.
+# Insert m6809 into the basic_machine list, idempotently.
+if ! grep -q '^[[:space:]]*| m6809 |' "${NEWLIB_SRCDIR}/config.sub"; then
+	echo "Teaching newlib's config.sub about m6809..."
+	sed -i.bak 's/| m6811 | m68hc11 | m6812 | m68hc12/| m6809 | m6811 | m68hc11 | m6812 | m68hc12/' \
+		"${NEWLIB_SRCDIR}/config.sub"
+	rm -f "${NEWLIB_SRCDIR}/config.sub.bak"
+fi
+
 # --- Symlink newlib into GCC tree ---
 cd "${GCC_SRCDIR}"
 [ -L newlib ] || ln -sf "../${NEWLIB_SRCDIR}/newlib" newlib
@@ -272,17 +346,25 @@ cd "${SCRIPTDIR}"
 # --- Install toolchain wrapper scripts ---
 echo "Installing toolchain scripts to ${PREFIX}/bin..."
 mkdir -p "${PREFIX}/bin"
-cp "${SCRIPTDIR}/as" "${PREFIX}/bin/m6809-unknown-as"
-cp "${SCRIPTDIR}/ld" "${PREFIX}/bin/m6809-unknown-ld"
-cp "${SCRIPTDIR}/ar" "${PREFIX}/bin/m6809-unknown-ar"
-chmod +x "${PREFIX}/bin"/m6809-unknown-{as,ld,ar}
+cp "${SCRIPTDIR}/as" "${PREFIX}/bin/${TARGET_TRIPLE}-as"
+cp "${SCRIPTDIR}/ld" "${PREFIX}/bin/${TARGET_TRIPLE}-ld"
+cp "${SCRIPTDIR}/ar" "${PREFIX}/bin/${TARGET_TRIPLE}-ar"
+chmod +x "${PREFIX}/bin/${TARGET_TRIPLE}-as" \
+         "${PREFIX}/bin/${TARGET_TRIPLE}-ld" \
+         "${PREFIX}/bin/${TARGET_TRIPLE}-ar"
 
+# lwar archives carry their own symbol index; ranlib is a no-op.
+# nm/objdump/strip aren't meaningful for lwasm objects either.
 for tool in nm objdump ranlib strip; do
-	ln -sf /usr/bin/true "${PREFIX}/bin/m6809-unknown-${tool}"
+	ln -sf /usr/bin/true "${PREFIX}/bin/${TARGET_TRIPLE}-${tool}"
 done
 
 # --- Configure ---
 export PATH="${PREFIX}/bin:${LWTOOLS_BINDIR}:${PATH}"
+if [ -n "${HOST_CXX_OVERRIDE}" ]; then
+	export CC=$(echo "${HOST_CXX_OVERRIDE}" | sed 's/g++/gcc/')
+	export CXX="${HOST_CXX_OVERRIDE}"
+fi
 
 mkdir -p "${BUILDDIR}"
 cd "${BUILDDIR}"
@@ -306,18 +388,18 @@ if [ ! -f Makefile ]; then
 	fi
 	"../${GCC_SRCDIR}/configure" \
 		--enable-languages=c \
-		--target=m6809-unknown \
-		--program-prefix=m6809-unknown- \
-		--enable-obsolete \
+		--target=${TARGET_TRIPLE} \
+		--program-prefix=${TARGET_TRIPLE}- \
 		--srcdir="../${GCC_SRCDIR}" \
 		--disable-threads \
 		--disable-nls \
 		--disable-libssp \
 		--with-newlib \
 		--prefix="${PREFIX}" \
-		--with-as="${PREFIX}/bin/m6809-unknown-as" \
-		--with-ld="${PREFIX}/bin/m6809-unknown-ld" \
-		--with-ar="${PREFIX}/bin/m6809-unknown-ar" \
+		--with-as="${PREFIX}/bin/${TARGET_TRIPLE}-as" \
+		--with-ld="${PREFIX}/bin/${TARGET_TRIPLE}-ld" \
+		--with-ar="${PREFIX}/bin/${TARGET_TRIPLE}-ar" \
+		${EXTRA_CONFIGURE} \
 		${CONFIGURE_EXTRA}
 fi
 
@@ -329,24 +411,28 @@ echo "Building libgcc..."
 make all-target-libgcc
 
 echo "Building newlib..."
-make all-target-newlib
+if [ -n "${NEWLIB_TARGET_CFLAGS}" ]; then
+	make all-target-newlib CFLAGS_FOR_TARGET="${NEWLIB_TARGET_CFLAGS}"
+else
+	make all-target-newlib
+fi
 
 # --- Install ---
 echo "Installing GCC and libgcc to ${PREFIX}..."
 make install-gcc install-target-libgcc
 
 echo "Installing newlib libraries and headers to ${PREFIX}..."
-mkdir -p "${PREFIX}/m6809-unknown/lib" "${PREFIX}/m6809-unknown/include"
+mkdir -p "${PREFIX}/${TARGET_TRIPLE}/lib" "${PREFIX}/${TARGET_TRIPLE}/include"
 
-NEWLIB_BUILDDIR="${BUILDDIR}/m6809-unknown/newlib"
+NEWLIB_BUILDDIR="${BUILDDIR}/${TARGET_TRIPLE}/newlib"
 for lib in libc.a libm.a libg.a; do
 	if [ -f "${NEWLIB_BUILDDIR}/${lib}" ]; then
-		cp "${NEWLIB_BUILDDIR}/${lib}" "${PREFIX}/m6809-unknown/lib/"
+		cp "${NEWLIB_BUILDDIR}/${lib}" "${PREFIX}/${TARGET_TRIPLE}/lib/"
 	fi
 done
 
-cp -r "${NEWLIB_BUILDDIR}/targ-include"/* "${PREFIX}/m6809-unknown/include/"
-cp -r "${SCRIPTDIR}/${GCC_SRCDIR}/newlib/libc/include"/* "${PREFIX}/m6809-unknown/include/"
+cp -r "${NEWLIB_BUILDDIR}/targ-include"/* "${PREFIX}/${TARGET_TRIPLE}/include/"
+cp -r "${SCRIPTDIR}/${GCC_SRCDIR}/newlib/libc/include"/* "${PREFIX}/${TARGET_TRIPLE}/include/"
 
 echo ""
 echo "Build complete. Installed to ${PREFIX}"
