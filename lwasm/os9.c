@@ -25,6 +25,7 @@ This file implements the various pseudo operations related to OS9 target
 #include <stdlib.h>
 #include <string.h>
 
+#include <lw_alloc.h>
 #include <lw_expr.h>
 
 #include "lwasm.h"
@@ -67,13 +68,6 @@ PARSEFUNC(pseudo_parse_mod)
 {
 	lw_expr_t e;
 	int i;
-	
-	if (as -> output_format != OUTPUT_OS9)
-	{
-		lwasm_register_error2(as, l, E_DIRECTIVE_OS9_ONLY, "%s", "mod");
-		skip_operand(p);
-		return;
-	}
 	
 	if (as -> inmod)
 	{
@@ -129,9 +123,13 @@ doneexpr:
 	lw_expr_destroy(l -> daddr);
 	l -> daddr = lw_expr_build(lw_expr_type_int, 0);
 
-	// init crc
-	as -> inmod = 1;
-	
+	// In os9 format, set inmod so ORG uses module-relative addressing.
+	// In other formats (e.g. rawrel), keep inmod=0 so ORG still updates
+	// addr normally (needed for structured macro backpatching). EMOD will
+	// recompute CRC from scratch over the final output bytes regardless.
+	if (as -> output_format == OUTPUT_OS9)
+		as -> inmod = 1;
+
 	l -> len = (l -> lint == 6) ? 13 : 9;
 }
 
@@ -183,31 +181,80 @@ EMITFUNC(pseudo_emit_mod)
 PARSEFUNC(pseudo_parse_emod)
 {
 	skip_operand(p);
-	if (as -> output_format != OUTPUT_OS9)
-	{
-		lwasm_register_error2(as, l, E_DIRECTIVE_OS9_ONLY, "%s", "emod");
-		return;
-	}
-	
-	if (!(as -> inmod))
+
+	// In os9 format, inmod tracks module state. In other formats,
+	// MOD may not set inmod (to preserve ORG behavior), so skip check.
+	if (as -> output_format == OUTPUT_OS9 && !(as -> inmod))
 	{
 		lwasm_register_error(as, l, E_MODULE_NOTIN);
 		return;
 	}
-	
+
 	as -> inmod = 0;
 	l -> len = 3;
 }
 
+static void os9_crc_update(unsigned char crc[3], unsigned char byte)
+{
+	// CRC-24 used by OS-9 modules
+	// direct transliteration from nitros9 asm source
+	byte ^= crc[0];
+	crc[0] = crc[1];
+	crc[1] = crc[2];
+	crc[1] ^= (byte >> 7);
+	crc[2] = (byte << 1);
+	crc[1] ^= (byte >> 2);
+	crc[2] ^= (byte << 6);
+	byte ^= (byte << 1);
+	byte ^= (byte << 2);
+	byte ^= (byte << 4);
+	if (byte & 0x80)
+	{
+		crc[0] ^= 0x80;
+		crc[2] ^= 0x21;
+	}
+}
+
 EMITFUNC(pseudo_emit_emod)
 {
-	unsigned char tcrc[3];
-	
-	// don't mess with CRC!
-	tcrc[0] = as -> crc[0] ^ 0xff;
-	tcrc[1] = as -> crc[1] ^ 0xff;
-	tcrc[2] = as -> crc[2] ^ 0xff;
-	lwasm_emit(l, tcrc[0]);
-	lwasm_emit(l, tcrc[1]);
-	lwasm_emit(l, tcrc[2]);
+	unsigned char crc[3];
+	unsigned char *image;
+	line_t *cl;
+	int i, addr, modsize;
+
+	// Build a flat byte image of the module, then compute CRC over it.
+	// This correctly handles ORG backpatching (used by structured macros)
+	// where later lines overwrite bytes emitted by earlier lines.
+	modsize = lw_expr_intval(l -> addr);
+	if (modsize <= 0)
+		modsize = 0x10000;  // fallback
+	image = lw_alloc(modsize);
+	memset(image, 0, modsize);
+
+	for (cl = as -> line_head; cl != l; cl = cl -> next)
+	{
+		if (cl -> outputl > 0 && cl -> output)
+		{
+			addr = lw_expr_intval(cl -> addr);
+			if (addr >= 0 && addr + cl -> outputl <= modsize)
+			{
+				memcpy(image + addr, cl -> output, cl -> outputl);
+			}
+		}
+	}
+
+	crc[0] = 0xff;
+	crc[1] = 0xff;
+	crc[2] = 0xff;
+	for (i = 0; i < modsize; i++)
+		os9_crc_update(crc, image[i]);
+
+	lw_free(image);
+
+	crc[0] ^= 0xff;
+	crc[1] ^= 0xff;
+	crc[2] ^= 0xff;
+	lwasm_emit(l, crc[0]);
+	lwasm_emit(l, crc[1]);
+	lwasm_emit(l, crc[2]);
 }
