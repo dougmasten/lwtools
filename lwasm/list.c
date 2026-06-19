@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -29,6 +30,157 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 #include "instab.h"
 
 void list_symbols(asmstate_t *as, FILE *of);
+
+/*
+Print source line with columnar formatting.
+Parses line into label/mnemonic/operand/comment fields and
+prints each at the configured column position.
+*/
+static void list_pad_to(FILE *of, int *col, int target)
+{
+	if (!of) return;
+	if (*col >= target) { fputc(' ', of); (*col)++; return; }
+	while (*col < target) { fputc(' ', of); (*col)++; }
+}
+
+static void list_source_columnar(asmstate_t *as, line_t *cl, char *line, FILE *of)
+{
+	char *p = line;
+	char *label = NULL, *mnem = NULL, *oper = NULL, *comment = NULL;
+	int llen = 0, mlen = 0, olen = 0;
+	int col = 0;
+
+	if (!of || !line || !*line) return;
+
+	/* Full-line comment: * or ; at column 0 — print as-is */
+	if (*p == '*' || *p == ';')
+	{
+		fputs(p, of);
+		return;
+	}
+
+	/* Label: non-whitespace starting at column 0 */
+	if (*p && !isspace((unsigned char)*p))
+	{
+		label = p;
+		while (*p && !isspace((unsigned char)*p))
+			p++;
+		llen = p - label;
+	}
+
+	/* Skip whitespace to mnemonic */
+	while (*p && isspace((unsigned char)*p))
+		p++;
+
+	/* Mnemonic */
+	if (*p && *p != '*' && *p != ';')
+	{
+		mnem = p;
+		while (*p && !isspace((unsigned char)*p))
+			p++;
+		mlen = p - mnem;
+	}
+
+	/* Skip whitespace to operand */
+	while (*p && (*p == ' ' || *p == '\t'))
+		p++;
+
+	/* If the parser determined this line has no operand,
+	   everything after the mnemonic is comment */
+	if (!cl -> hasoperand)
+	{
+		if (*p)
+			comment = p;
+		goto do_print;
+	}
+
+	/* Operand: everything up to a comment or end of line.
+	   Note: * mid-line is current PC or multiply, not a comment. */
+	if (*p && *p != ';')
+	{
+		oper = p;
+		/* Find end of operand - tricky because of string literals */
+		while (*p && *p != ';')
+		{
+			if (*p == '\'' || *p == '"' || *p == '/')
+			{
+				/* String literal - skip to matching delimiter */
+				char q = *p++;
+				while (*p && *p != q)
+					p++;
+				if (*p) p++;
+			}
+			else if (*p == '#' && p[1] == '\'')
+			{
+				/* Character literal #'x - skip the 3 chars */
+				p += 2;
+				if (*p) p++;
+			}
+			else if (isspace((unsigned char)*p))
+			{
+				/* whitespace could be separator before comment */
+				char *t = p;
+				while (*t && isspace((unsigned char)*t))
+					t++;
+				if (!*t || *t == ';')
+					break;
+				/* it's whitespace in the middle - could be comment text */
+				/* heuristic: if next word looks like an instruction, it's not a comment */
+				/* simpler: treat remaining text as comment */
+				break;
+			}
+			else
+				p++;
+		}
+		/* trim trailing whitespace from operand */
+		olen = p - oper;
+		while (olen > 0 && isspace((unsigned char)oper[olen - 1]))
+			olen--;
+	}
+
+	/* Skip whitespace to comment */
+	while (*p && isspace((unsigned char)*p))
+		p++;
+
+	/* Comment: rest of line */
+	if (*p)
+		comment = p;
+
+do_print:
+	/* Now print each field at its column */
+	col = 0;
+
+	/* Label */
+	if (label && llen > 0)
+	{
+		list_pad_to(of, &col, as -> listcol[0]);
+		fwrite(label, 1, llen, of);
+		col += llen;
+	}
+
+	/* Mnemonic */
+	if (mnem && mlen > 0)
+	{
+		list_pad_to(of, &col, as -> listcol[1]);
+		fwrite(mnem, 1, mlen, of);
+		col += mlen;
+	}
+
+	/* Operand */
+	if (oper && olen > 0)
+	{
+		list_pad_to(of, &col, as -> listcol[2]);
+		fwrite(oper, 1, olen, of);
+		col += olen;
+	}
+
+	/* Comment */
+	if (comment)
+	{
+		list_pad_to(of, &col, as -> listcol[3]);
+		fputs(comment, of);
+	}
+}
 
 /*
 Do listing
@@ -273,11 +425,16 @@ void do_list(asmstate_t *as)
 			}
 		}
 
-		if (as -> tabwidth == 0)
+		if (as -> listcol[1] > 0)
+		{
+			/* Column-formatted listing output */
+			list_source_columnar(as, cl, cl -> ltext, of);
+		}
+		else if (as -> tabwidth == 0)
 		{
 			if (of) fputs(cl -> ltext, of);
 		}
-		else 
+		else
 		{
 			i = 0;
 			for (tc = cl -> ltext; *tc; tc++)

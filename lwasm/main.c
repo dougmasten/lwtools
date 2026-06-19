@@ -51,6 +51,7 @@ static struct lw_cmdline_options options[] =
 	{ "symbols-nolocals", 0x103,	0,	lw_cmdline_opt_optional,	"Same as --symbols but with local labels ignored"},
 	{ "symbol-dump", 0x106, "FILE",		lw_cmdline_opt_optional,	"Dump global symbol table in assembly format" },
 	{ "tabs",		't',	"WIDTH",	0,							"Set tab spacing in listing (0=don't expand tabs)" },
+	{ "listcol",	0x10A,	"L,M,O,C",	0,							"Set listing columns: label, mnemonic, operand, comment (e.g. 0,8,16,32)" },
 	{ "map",		'm',	"FILE",		lw_cmdline_opt_optional,	"Generate map [to FILE]"},
 	{ "decb",		'b',	0,			0,							"Generate DECB .bin format output, equivalent of --format=decb"},
 	{ "flex",		'F',	0,			0,							"Generate TSC Flex format output, equivalent of --format=flex"},
@@ -140,6 +141,13 @@ static int parse_opts(int key, char *arg, void *state)
 	case 't':
 		if (arg)
 			as -> tabwidth = atoi(arg);
+		break;
+
+	case 0x10A:
+		if (arg)
+			sscanf(arg, "%d,%d,%d,%d",
+				&as -> listcol[0], &as -> listcol[1],
+				&as -> listcol[2], &as -> listcol[3]);
 		break;
 
 	case 'l':

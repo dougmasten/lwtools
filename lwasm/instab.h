@@ -61,4 +61,7 @@ enum
 
 extern instab_t instab[];
 
+/* inherent instruction parser - used by listing to detect no-operand insns */
+PARSEFUNC(insn_parse_inh);
+
 #endif //__instab_h_seen__

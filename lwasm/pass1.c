@@ -122,6 +122,7 @@ void do_pass1(asmstate_t *as)
 		cl -> csect = as -> csect;
 		cl -> pragmas = as -> pragmas;
 		cl -> context = as -> context;
+		cl -> hasoperand = 1;			// default: assume operand present; cleared by inherent insns
 		cl -> ltext = lw_strdup(line);
 		cl -> soff = -1;
 		cl -> dshow = -1;
@@ -337,9 +338,11 @@ void do_pass1(asmstate_t *as)
         	{
         		// check for macros even if they shadow real operations
         		// NOTE: "ENDM" cannot be shadowed
+        		char *p_before = p1;
         		if (expand_macro(as, cl, &p1, sym) == 0)
         		{
         			// a macro was expanded here
+        			cl -> hasoperand = (p_before != p1) ? 1 : 0;
         			goto linedone;
         		}
         	}
@@ -354,7 +357,15 @@ void do_pass1(asmstate_t *as)
 				{
 					// bad opcode; check for macro here
 					// but don't expand it if "nomacro" is in effect
-					if (nomacro || expand_macro(as, cl, &p1, sym) != 0)
+					{
+						char *p_before = p1;
+						if (nomacro || expand_macro(as, cl, &p1, sym) != 0)
+							goto not_a_macro;
+						cl -> hasoperand = (p_before != p1) ? 1 : 0;
+						goto linedone;
+					}
+					not_a_macro:
+					if (1)
 					{
 						// macro expansion failed
 						if (expand_struct(as, cl, &p1, sym) != 0)
@@ -387,6 +398,9 @@ void do_pass1(asmstate_t *as)
 						// call parse function
 						debug_message(as, 100, "len = %d, dlen = %d", cl -> len, cl -> dlen);
 						(instab[opnum].parse)(as, cl, &p1);
+						// record whether this instruction takes an operand (for listing)
+						// inherent instructions use insn_parse_inh which skips but ignores operand
+						cl -> hasoperand = (instab[opnum].parse != insn_parse_inh) ? 1 : 0;
 
 						// if we're forcing address modes on pass 1, force a resolution
 						if (CURPRAGMA(cl, PRAGMA_FORWARDREFMAX) && instab[opnum].resolve)

@@ -310,6 +310,7 @@ struct line_s
 	int lint;							// pass forward integer
 	int lint2;							// another pass forward integer
 	int conditional_return;				// for ?RTS handling (1 if RTS follows)
+	int hasoperand;						// set during parsing if line has an operand
 	asmstate_t *as;						// assembler state data ptr
 	int pragmas;						// pragmas in effect for the line
 	int context;						// the symbol context number
@@ -434,6 +435,7 @@ struct asmstate_s
 	char *list_file;					// name of file to list to
 	char *symbol_dump_file;				// name of file to dump symbol table to
 	int tabwidth;						// tab width in list file
+	int listcol[4];						// column-formatted listing: label, mnemonic, operand, comment (0=off)
 	char *map_file;						// name of map file
 	char *output_file;					// output file name	
 	lw_stringlist_t input_files;		// files to assemble
