@@ -5,13 +5,16 @@
 # This script will optionally download, then patch and build GCC and
 # newlib for the m6809 target, using lwtools as the assembler/linker.
 #
-# Two GCC versions are supported (selectable via --gcc-version):
-#   - 4.6.4:           the legacy lwtools toolchain.  Builds cc1; the
-#                      backend ICEs partway through libgcc.
-#   - 9.5.0 (default): forward-port.  cc1 + libgcc + newlib all working.
+# Three GCC versions are supported (selectable via --gcc-version):
+#   - 4.6.4:            the legacy lwtools toolchain.  Builds cc1; the
+#                       backend ICEs partway through libgcc.
+#   - 9.5.0:            first hop of the forward-port.  cc1 + libgcc +
+#                       newlib all working; this is the installed default.
+#   - 16.1.0 (default): second hop, with the cc0 -> MODE_CC migration.
+#                       cc1 + libgcc + newlib all working.
 #
 # Usage:
-#   ./build-gcc6809.sh [--gcc-version=4.6.4|9.5.0] [--fetch] \
+#   ./build-gcc6809.sh [--gcc-version=4.6.4|9.5.0|16.1.0] [--fetch] \
 #                      [--prefix=/usr/local/m6809] [--clean] [--reconfigure]
 #
 # Prerequisites:
@@ -28,7 +31,7 @@
 set -e
 
 # --- Defaults ---
-GCC_VERSION=9.5.0
+GCC_VERSION=16.1.0
 NEWLIB_VERSION=4.6.0.20260123
 NEWLIB_PATCH_LEVEL=1
 PREFIX=/usr/local/m6809
@@ -57,7 +60,7 @@ for arg in "$@"; do
 		--help|-h)
 			echo "Usage: $0 [--gcc-version=VER] [--fetch] [--prefix=DIR] [--clean] [--reconfigure]"
 			echo ""
-			echo "  --gcc-version  GCC version to build (4.6.4 or 9.5.0; default: 9.5.0)"
+			echo "  --gcc-version  GCC version to build (4.6.4, 9.5.0 or 16.1.0; default: 16.1.0)"
 			echo "  --fetch        Download GCC and newlib source tarballs"
 			echo "  --prefix       Installation prefix (default: /usr/local/m6809)"
 			echo "  --clean        Remove build and unpacked source dirs before building"
@@ -107,8 +110,41 @@ case "${GCC_VERSION}" in
 		# -O0 sidesteps both and produces working libc.a / libm.a / libg.a.
 		NEWLIB_TARGET_CFLAGS=-O0
 		;;
+	16.1.0)
+		GCC_PATCH_LEVEL=1
+		GCC_TARBALL_EXT=tar.xz
+		TARGET_TRIPLE=m6809-unknown-none
+		HOST_FIX_AARCH64_DARWIN=upstream # GCC 16 ships host-aarch64-darwin.cc itself
+		HOST_FIX_16K_PAGES=no            # GCC 16 aligns pch correctly
+		HOST_CXX_OVERRIDE=g++-15         # libc++ <map> + safe-ctype clash still present
+		HOST_USES_SYSTEM_ZLIB=yes        # bundled zlib's fdopen vs macOS stdio.h still
+		EXTRA_CONFIGURE="--disable-libstdcxx --disable-multilib --disable-lto --disable-decimal-float --disable-libquadmath --with-system-zlib"
+		# Newlib stays at -O0 because the m6809 backend has many
+		# pre-existing latent issues at -O1+: register-spill failures
+		# (siprintf/sniprintf FILE-struct init), unbounded reload
+		# loops, ICEs, and >32 KiB frames (hash_bigkey).  A `-k -O2`
+		# rebuild surfaces 60+ ICEs and several stuck cc1 processes
+		# across stdio, string, math, and search.  These are real
+		# backend limits, not regressions, and fixing them properly
+		# would be days of work without test coverage.
+		# This session DID land three backend improvements that help
+		# user code at -O2 even though newlib itself can't use them:
+		#   - gcc6809lw-16.1.0-1.patch's cbranch length attrs fixed
+		#     the lwasm "Byte overflow" failures.
+		#   - TARGET_CONDITIONAL_REGISTER_USAGE is now wired (it was
+		#     commented out and -msoft-reg-count=N was a silent no-op).
+		#   - TARGET_SPILL_CLASS returns ALL_REGS as a CRIS-style
+		#     fallback for LRA spill class exhaustion.
+		#   - m6809_hard_regno_mode_ok restricts M-regs to QImode
+		#     (HImode allocation into M-regs was a latent ICE source
+		#     because *movhi_1 has no insn pattern moving HI in/out).
+		# User code may pass `-msoft-reg-count=8 -O2` and the spill-
+		# class fallback may help; newlib's pressure profile is just
+		# more than the backend can tolerate today.
+		NEWLIB_TARGET_CFLAGS=-O0
+		;;
 	*)
-		echo "Error: unsupported --gcc-version=${GCC_VERSION} (try 4.6.4 or 9.5.0)" >&2
+		echo "Error: unsupported --gcc-version=${GCC_VERSION} (try 4.6.4, 9.5.0 or 16.1.0)" >&2
 		exit 1
 		;;
 esac
