@@ -368,6 +368,7 @@ EMITFUNC(insn_emit_conv);
 instab_t instab[] =
 {
 	// 6809 convenience instructions
+	{ "asld",		{	0x5849,	-1,		-1,		 4 },	insn_parse_conv,		insn_resolve_conv,				insn_emit_conv,				lwasm_insn_is6809conv },
 	{ "asrd",		{	0x4756,	-1,		-1,		 4 },	insn_parse_conv,		insn_resolve_conv,				insn_emit_conv,				lwasm_insn_is6809conv },
 	{ "clrd",		{	0x4f5f,	-1,		-1,		 4 },	insn_parse_conv,		insn_resolve_conv,				insn_emit_conv,				lwasm_insn_is6809conv },
 	{ "comd",		{	0x4353,	-1,		-1,		 4 },	insn_parse_conv,		insn_resolve_conv,				insn_emit_conv,				lwasm_insn_is6809conv },
