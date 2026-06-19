@@ -205,7 +205,6 @@ void do_output_srec(FILE *of)
 	int recaddr = 0;
 	int recdlen = 0;
 	int recsum;
-	int reccnt = -1;
 	unsigned char* sectcode;
 	// no header yet; unnecessary
 
@@ -234,7 +233,6 @@ void do_output_srec(FILE *of)
 			recsum += (recaddr >> 8) & 0xFF;
 			recsum += recaddr & 0xFF;
 			fprintf(of, "%02X\r\n", (unsigned char)(~recsum));
-			reccnt += 1;
 			remainingcodebytes -= recdlen;
 			recaddr += recdlen;
 		}
