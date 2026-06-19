@@ -338,7 +338,15 @@ void lw_expr_print_aux(lw_expr_t E, char **obuf, int *buflen, int *bufloc)
 		case lw_expr_oper_bwxor:
 			strcat(buf, "BWXOR ");
 			break;
-			
+
+		case lw_expr_oper_lshift:
+			strcat(buf, "<< ");
+			break;
+
+		case lw_expr_oper_rshift:
+			strcat(buf, ">> ");
+			break;
+
 		case lw_expr_oper_and:
 			strcat(buf, "AND ");
 			break;
@@ -844,6 +852,14 @@ again:
 			tr = E -> operands -> p -> value ^ E -> operands -> next -> p -> value;
 			break;
 
+		case lw_expr_oper_lshift:
+			tr = E -> operands -> p -> value << E -> operands -> next -> p -> value;
+			break;
+
+		case lw_expr_oper_rshift:
+			tr = E -> operands -> p -> value >> E -> operands -> next -> p -> value;
+			break;
+
 		case lw_expr_oper_and:
 			tr = E -> operands -> p -> value && E -> operands -> next -> p -> value;
 			break;
@@ -1334,6 +1350,14 @@ lw_expr_t lw_expr_parse_expr(char **p, void *priv, int prec)
 		{ lw_expr_oper_bwxor, "^", 50 },
 
 		{ lw_expr_oper_bytepaste, "::", 45 },
+
+		/* Bit-shift operators (TSC-assembler compatibility).
+		   Must precede the single-char `<` and `>` entries below so the
+		   tokeniser matches the two-char form first. Precedence 150
+		   matches multiply/divide -- TSC and most assemblers treat shifts
+		   as same-tier as multiplication. */
+		{ lw_expr_oper_lshift, "<<", 150 },
+		{ lw_expr_oper_rshift, ">>", 150 },
 
 		{ lw_expr_oper_eq, "==", 30 },
 		{ lw_expr_oper_ne, "!=", 30 },

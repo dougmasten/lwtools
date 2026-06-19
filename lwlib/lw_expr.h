@@ -60,6 +60,8 @@ enum
 	lw_expr_oper_ge,            // greater than or equal
 	// operators below here will not be emitted in the actual expression
 	lw_expr_oper_bytepaste,     // past LSB of both operands into a 16 bit value
+	lw_expr_oper_lshift,        // bitwise left shift  (<<)
+	lw_expr_oper_rshift,        // bitwise right shift (>>)
 	lw_expr_oper_none = 0
 };
 
