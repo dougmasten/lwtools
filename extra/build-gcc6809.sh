@@ -169,6 +169,12 @@ fi
 if [ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "arm64" ] && \
    [ ! -f "${GCC_SRCDIR}/.aarch64-darwin-host-hooks" ]; then
 	echo "Adding aarch64-darwin host_hooks to GCC source tree..."
+	# Apple Silicon uses 16 KiB pages; the default 4 KiB alignment of
+	# pch_address_space in host-darwin.c trips an assertion in cc1.
+	# Bump alignment so the assertion holds on both 4 K and 16 K hosts.
+	sed -i.bak 's/__attribute__((aligned (4096)))/__attribute__((aligned (16384)))/' \
+		"${GCC_SRCDIR}/gcc/config/host-darwin.c"
+	rm -f "${GCC_SRCDIR}/gcc/config/host-darwin.c.bak"
 	mkdir -p "${GCC_SRCDIR}/gcc/config/aarch64"
 	cat > "${GCC_SRCDIR}/gcc/config/aarch64/host-aarch64-darwin.c" <<'EOF'
 /* aarch64-darwin host-specific hook definitions. */
