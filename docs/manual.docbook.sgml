@@ -2073,6 +2073,43 @@ inserted RTS (39).
 </varlistentry>
 
 <varlistentry>
+<term>asm09</term>
+<listitem>
+<para>
+
+This pragma enables a small set of Motorola ASM09 compatibility features
+that are off by default.  It was added to allow direct assembly of vintage
+Motorola sources (notably the MC6839 floating-point ROM) without modifying
+them.
+</para>
+<para>
+
+When asm09 is in effect:
+</para>
+<itemizedlist>
+<listitem><para>The string-comparison conditionals <literal>IFC</literal> and
+<literal>IFNC</literal> are recognised. <literal>IFC s1,s2</literal>
+assembles the following block if the two comma-separated strings are equal;
+<literal>IFNC</literal> assembles if they differ.</para></listitem>
+<listitem><para>The <literal>EXIT</literal> and <literal>EXITM</literal>
+directives terminate the current macro expansion early; any remaining lines
+of the macro body are skipped.</para></listitem>
+<listitem><para>Macro argument parsing treats commas inside matched
+parentheses as part of a single argument, and strips one layer of outer
+parentheses after parsing.  This allows indexed addressing modes such as
+<literal>(FRACT,X)</literal> to be passed to a macro as one argument.</para></listitem>
+</itemizedlist>
+<para>
+
+With the pragma off (the default), <literal>IFC</literal>,
+<literal>IFNC</literal>, <literal>EXIT</literal> and <literal>EXITM</literal>
+are not recognised as directives, and macro arguments split on every comma
+regardless of parentheses.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term>m80ext</term>
 <listitem>
 <para>

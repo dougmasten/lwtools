@@ -264,6 +264,18 @@ PARSEFUNC(pseudo_parse_ifstr);
 #define pseudo_resolve_ifstr NULL
 #define pseudo_emit_ifstr NULL
 
+PARSEFUNC(pseudo_parse_ifc);
+#define pseudo_resolve_ifc NULL
+#define pseudo_emit_ifc NULL
+
+PARSEFUNC(pseudo_parse_ifnc);
+#define pseudo_resolve_ifnc NULL
+#define pseudo_emit_ifnc NULL
+
+PARSEFUNC(pseudo_parse_exit);
+#define pseudo_resolve_exit NULL
+#define pseudo_emit_exit NULL
+
 PARSEFUNC(pseudo_parse_endc);
 #define pseudo_resolve_endc NULL
 #define pseudo_emit_endc NULL
@@ -726,6 +738,11 @@ instab_t instab[] =
 
 	// string operations, mostly useful in macros
 	{ "ifstr",		{	-1,		-1,		-1,		-1},	pseudo_parse_ifstr,		pseudo_resolve_ifstr,			pseudo_emit_ifstr,			lwasm_insn_cond},
+	{ "ifc",		{	-1,		-1,		-1,		-1},	pseudo_parse_ifc,		pseudo_resolve_ifc,				pseudo_emit_ifc,			lwasm_insn_cond | lwasm_insn_isasm09},
+	{ "ifnc",		{	-1,		-1,		-1,		-1},	pseudo_parse_ifnc,		pseudo_resolve_ifnc,			pseudo_emit_ifnc,			lwasm_insn_cond | lwasm_insn_isasm09},
+
+	{ "exitm",		{	-1,		-1,		-1,		-1},	pseudo_parse_exit,		pseudo_resolve_exit,			pseudo_emit_exit,			lwasm_insn_cond | lwasm_insn_isasm09},
+	{ "exit",		{	-1,		-1,		-1,		-1},	pseudo_parse_exit,		pseudo_resolve_exit,			pseudo_emit_exit,			lwasm_insn_cond | lwasm_insn_isasm09},
 
 	{ "macro",		{	-1, 	-1, 	-1, 	-1}, 	pseudo_parse_macro,		pseudo_resolve_macro,			pseudo_emit_macro,			lwasm_insn_cond | lwasm_insn_setsym},
 	{ "macr",		{	-1, 	-1, 	-1, 	-1}, 	pseudo_parse_macro,		pseudo_resolve_macro,			pseudo_emit_macro,			lwasm_insn_cond | lwasm_insn_setsym},

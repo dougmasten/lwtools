@@ -79,6 +79,7 @@ static const struct pragma_list set_pragmas[] =
 	{ "emuext", "noemuext", PRAGMA_EMUEXT },
 	{ "nooutput", "output", PRAGMA_NOOUTPUT },
 	{ "noexpandcond", "expandcond", PRAGMA_NOEXPANDCOND },
+	{ "asm09", "noasm09", PRAGMA_ASM09 },
 	{ 0, 0, 0 }
 };
 

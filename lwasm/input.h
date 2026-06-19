@@ -48,4 +48,6 @@ struct ifl
 
 extern struct ifl *ifl_head;
 
+void input_drain_string(asmstate_t *as);
+
 #endif

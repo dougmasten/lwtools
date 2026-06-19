@@ -176,9 +176,18 @@ int expand_macro(asmstate_t *as, line_t *l, char **p, char *opc)
 
 	while (**p && !isspace(**p) && **p)
 	{
+		int pdepth = 0;
+		int paren_group = CURPRAGMA(l, PRAGMA_ASM09);
 		p2 = *p;
-		while (*p2 && !isspace(*p2) && *p2 != ',')
+		while (*p2 && !isspace(*p2) && !(*p2 == ',' && pdepth == 0))
 		{
+			if (paren_group)
+			{
+				if (*p2 == '(')
+					pdepth++;
+				else if (*p2 == ')' && pdepth > 0)
+					pdepth--;
+			}
 			if (*p2 == '\\')
 			{
 				if (p2[1])
@@ -204,6 +213,17 @@ int expand_macro(asmstate_t *as, line_t *l, char **p, char *opc)
 			*p3 = *p2;
 		}
 		*p3 = '\0';
+
+		// strip outer parentheses used for argument grouping
+		if (paren_group)
+		{
+			int alen = strlen(args[nargs]);
+			if (alen >= 2 && args[nargs][0] == '(' && args[nargs][alen - 1] == ')')
+			{
+				memmove(args[nargs], args[nargs] + 1, alen - 2);
+				args[nargs][alen - 2] = '\0';
+			}
+		}
 		
 		nargs++;
 		if (**p == ',')

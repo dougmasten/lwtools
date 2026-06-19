@@ -2405,3 +2405,79 @@ PARSEFUNC(pseudo_parse_ifstr)
 		as -> skipcount = 1;
 	}
 }
+
+/*
+IFC - assemble if two strings are equal (coincide)
+Syntax: IFC string1,string2
+*/
+PARSEFUNC(pseudo_parse_ifc)
+{
+	char *arg1;
+	char *arg2;
+
+	l -> len = 0;
+
+	if (as -> skipcond && !(as -> skipmacro))
+	{
+		as -> skipcount++;
+		skip_operand(p);
+		return;
+	}
+
+	arg1 = strcond_parsearg(p);
+	arg2 = strcond_parsearg(p);
+
+	if (strcmp(arg1, arg2) != 0)
+	{
+		as -> skipcond = 1;
+		as -> skipcount = 1;
+	}
+	lw_free(arg1);
+	lw_free(arg2);
+}
+
+/*
+IFNC - assemble if two strings are NOT equal (not coincide)
+Syntax: IFNC string1,string2
+*/
+PARSEFUNC(pseudo_parse_ifnc)
+{
+	char *arg1;
+	char *arg2;
+
+	l -> len = 0;
+
+	if (as -> skipcond && !(as -> skipmacro))
+	{
+		as -> skipcount++;
+		skip_operand(p);
+		return;
+	}
+
+	arg1 = strcond_parsearg(p);
+	arg2 = strcond_parsearg(p);
+
+	if (strcmp(arg1, arg2) == 0)
+	{
+		as -> skipcond = 1;
+		as -> skipcount = 1;
+	}
+	lw_free(arg1);
+	lw_free(arg2);
+}
+
+/*
+EXIT/EXITM - terminate macro expansion early
+Drains the current string input source so no more macro lines are read.
+*/
+PARSEFUNC(pseudo_parse_exit)
+{
+	l -> len = 0;
+	l -> hideline = 1;
+	skip_operand(p);
+
+	if (as -> skipcond)
+		return;
+
+	input_drain_string(as);
+}

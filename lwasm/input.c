@@ -547,6 +547,15 @@ char *input_curspec(asmstate_t *as)
 	return NULL;
 }
 
+void input_drain_string(asmstate_t *as)
+{
+	if (IS && IS -> type == input_type_string)
+	{
+		char *s = (char *)(IS -> data);
+		IS -> data2 = strlen(s);
+	}
+}
+
 void input_stack_push(asmstate_t *as, input_stack_entry *e)
 {
 	struct input_stack_node *n;

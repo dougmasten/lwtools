@@ -306,6 +306,8 @@ void do_pass1(asmstate_t *as)
 				if ((instab[opnum].flags & lwasm_insn_is6309conv) && !CURPRAGMA(cl, PRAGMA_6309CONV)) continue;
 				// ignore emulator extension opcodes unless asked for
 				if ((instab[opnum].flags & lwasm_insn_isemuext) && !CURPRAGMA(cl, PRAGMA_EMUEXT)) continue;
+				// ignore Motorola ASM09 extension opcodes unless asked for
+				if ((instab[opnum].flags & lwasm_insn_isasm09) && !CURPRAGMA(cl, PRAGMA_ASM09)) continue;
 
 				if (!strcasecmp(instab[opnum].opcode, sym))
 					break;
