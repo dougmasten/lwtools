@@ -61,6 +61,7 @@ enum lwasm_output_e
 	OUTPUT_RAW,			// raw sequence of bytes
 	OUTPUT_OBJ,			// proprietary object file format
 	OUTPUT_RAWREL,		// raw bytes where ORG causes a SEEK in the file
+	OUTPUT_FLEX,			// FLEX loadable binary file format
 	OUTPUT_OS9,			// os9 module target
 	OUTPUT_SREC,		// motorola SREC format
 	OUTPUT_IHEX,		// intel hex format

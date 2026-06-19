@@ -33,6 +33,7 @@ Actually output the binary
 //#define writebytes(s, l, c, f)	do { int r; r = fwrite((s), (l), (c), (f)); (void)r; } while (0)
 #define writebytes(s, l, c, f)	do { (void)(fwrite((s), (l), (c), (f)) && 1); } while (0)
 
+void do_output_flex(FILE *of);
 void do_output_os9(FILE *of);
 void do_output_decb(FILE *of);
 void do_output_raw(FILE *of);
@@ -71,6 +72,10 @@ void do_output(void)
 		do_output_lwex0(of);
 		break;
 	
+	case OUTPUT_FLEX:
+		do_output_flex(of);
+		break;
+		
 	case OUTPUT_OS9:
 		do_output_os9(of);
 		break;
@@ -151,6 +156,74 @@ void do_output_decb(FILE *of)
 	buf[3] = linkscript.execaddr >> 8;
 	buf[4] = linkscript.execaddr & 0xff;
 	writebytes(buf, 1, 5, of);
+}
+
+/*
+This is very similar to the decb format. The preamble here begins
+with $02 instead of $00 for load segments, and the length and load
+address fields are swapped. For the transfer address, the preamble
+begins with $16 instead of $FF, and the next two bytes are thre
+transfer addess. The transfer address preamble is only three bytes
+long.
+*/
+void do_output_flex(FILE *of)
+{
+	int sn, sn2;
+	int cloc, olen;
+	unsigned char buf[5];
+	
+	for (sn = 0; sn < nsects; sn++)
+	{
+		if (sectlist[sn].ptr -> flags & SECTION_BSS)
+		{
+			// no output for a BSS section
+			continue;
+		}
+		if (sectlist[sn].ptr -> codesize == 0)
+		{
+			// don't generate output for a zero size section
+			continue;
+		}
+		
+		// calculate the length of this output block
+		cloc = sectlist[sn].ptr -> loadaddress;
+		olen = 0;
+		for (sn2 = sn; sn2 < nsects; sn2++)
+		{
+			// ignore BSS sections
+			if (sectlist[sn2].ptr -> flags & SECTION_BSS)
+				continue;
+			// ignore zero length sections
+			if (sectlist[sn2].ptr -> codesize == 0)
+				continue;
+			if (cloc != sectlist[sn2].ptr -> loadaddress)
+				break;
+			olen += sectlist[sn2].ptr -> codesize;
+			cloc += sectlist[sn2].ptr -> codesize;
+		}
+		
+		// write a preamble
+		buf[0] = 0x02;
+		buf[1] = sectlist[sn].ptr -> loadaddress >> 8;
+		buf[2] = sectlist[sn].ptr -> loadaddress & 0xff;
+		buf[3] = olen >> 8;
+		buf[4] = olen & 0xff;
+		writebytes(buf, 1, 5, of);
+		for (; sn < sn2; sn++)
+		{
+			if (sectlist[sn].ptr -> flags & SECTION_BSS)
+				continue;
+			if (sectlist[sn].ptr -> codesize == 0)
+				continue;
+			writebytes(sectlist[sn].ptr -> code, 1, sectlist[sn].ptr -> codesize, of);
+		}
+		sn--;
+	}
+	// write a postamble
+	buf[0] = 0x16;
+	buf[1] = linkscript.execaddr >> 8;
+	buf[2] = linkscript.execaddr & 0xff;
+	writebytes(buf, 1, 3, of);
 }
 
 void do_output_raw(FILE *of)

@@ -44,7 +44,7 @@ static struct lw_cmdline_options options[] =
 {
 	{ "output",		'o',	"FILE",		0,							"Output to FILE"},
 	{ "debug",		'd',	"LEVEL",	lw_cmdline_opt_optional,	"Set debug mode"},
-	{ "format",		'f',	"TYPE",		0,							"Select output format: decb, basic, raw, obj, os9, ihex, srec, dragon, abs"},
+	{ "format",		'f',	"TYPE",		0,							"Select output format: decb, basic, raw, obj, flex, os9, ihex, srec, dragon, abs"},
 	{ "list",		'l',	"FILE",		lw_cmdline_opt_optional,	"Generate list [to FILE]"},
 	{ "list-nofiles", 0x104, 0,			0,							"Omit file names in list output"},
 	{ "symbols",	's',	0,			lw_cmdline_opt_optional,	"Generate symbol list in listing, no effect without --list"},
@@ -53,6 +53,7 @@ static struct lw_cmdline_options options[] =
 	{ "tabs",		't',	"WIDTH",	0,							"Set tab spacing in listing (0=don't expand tabs)" },
 	{ "map",		'm',	"FILE",		lw_cmdline_opt_optional,	"Generate map [to FILE]"},
 	{ "decb",		'b',	0,			0,							"Generate DECB .bin format output, equivalent of --format=decb"},
+	{ "flex",		'F',	0,			0,							"Generate TSC Flex format output, equivalent of --format=flex"},
 	{ "dragon",     0x107,  0,          0,                          "Generate a Dragon DOS binary format, equivalent of --format=dragon"},
 	{ "abs",        0x108,  0,          0,                          "Generate absolute binary format, equivalent of --format=abs"},
 	{ "raw",		'r',	0,			0,							"Generate raw binary format output, equivalent of --format=raw"},
@@ -226,6 +227,8 @@ static int parse_opts(int key, char *arg, void *state)
 			as -> output_format = OUTPUT_DRAGON;
 		else if (!strcasecmp(arg, "abs"))
 			as -> output_format = OUTPUT_ABS;
+		else if (!strcasecmp(arg, "flex"))
+			as -> output_format = OUTPUT_FLEX;
 		else if (!strcasecmp(arg, "os9"))
 		{
 			as -> pragmas |= PRAGMA_DOLLARNOTLOCAL;

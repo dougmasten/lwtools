@@ -39,6 +39,7 @@ void write_code_decb(asmstate_t *as, FILE *of);
 void write_code_BASIC(asmstate_t *as, FILE *of);
 void write_code_rawrel(asmstate_t *as, FILE *of);
 void write_code_obj(asmstate_t *as, FILE *of);
+void write_code_flex(asmstate_t *as, FILE *of);
 void write_code_os9(asmstate_t *as, FILE *of);
 void write_code_hex(asmstate_t *as, FILE *of);
 void write_code_srec(asmstate_t *as, FILE *of);
@@ -49,7 +50,10 @@ void write_code_abs(asmstate_t *as, FILE *of);
 
 // this prevents warnings about not using the return value of fwrite()
 // r++ prevents the "set but not used" warnings; should be optimized out
-#define writebytes(s, l, c, f)	do { int r; r = fwrite((s), (l), (c), (f)); r++; } while (0)
+// Clang/LLVM is not fooled by this.
+// #define writebytes(s, l, c, f)	do { int r; r = fwrite((s), (l), (c), (f)); r++; } while (0)
+// This works:
+#define writebytes(s, l, c, f)	do { (void)fwrite((s), (l), (c), (f)); } while (0)
 
 void do_output(asmstate_t *as)
 {
@@ -89,6 +93,10 @@ void do_output(asmstate_t *as)
 	
 	case OUTPUT_OBJ:
 		write_code_obj(as, of);
+		break;
+
+	case OUTPUT_FLEX:
+		write_code_flex(as, of);
 		break;
 
 	case OUTPUT_OS9:
@@ -373,6 +381,97 @@ void write_code_decb(asmstate_t *as, FILE *of)
 	outbuf[3] = (as -> execaddr >> 8) & 0xFF;
 	outbuf[4] = (as -> execaddr) & 0xFF;
 	writebytes(outbuf, 5, 1, of);
+}
+
+static inline int MIN(int a, int b)
+{
+	return a < b ? a : b;
+}
+
+static void write_flex_block(unsigned char *buffer, unsigned int loadaddr, int blocklen, FILE *of)
+/*
+The FLEX loadable block records consist of:
+  A byte containing $02
+  A word containing the start address in memory of the block
+  A byte containing the length - usually forced to less than 255 for whatever reason.
+  The bytes to be loaded
+*/
+{
+	unsigned char header[4] = { 0x02, 0, 0, 0 };
+	int thisblocklen, blockpos = 0;
+
+	while (blocklen > 0)
+	{
+		header[1] = (unsigned char)(loadaddr >> 8);
+		header[2] = (unsigned char)loadaddr;
+		thisblocklen = MIN(192, blocklen);
+		header[3] = (unsigned char)thisblocklen;
+		writebytes(header, 4, 1, of);
+		writebytes(&buffer[blockpos], thisblocklen, 1, of);
+		blocklen -= thisblocklen;
+		blockpos += thisblocklen;
+		loadaddr += thisblocklen;
+	}
+}
+
+void write_code_flex(asmstate_t *as, FILE *of)
+{
+	line_t *cl;
+	int i;
+	int chunklen, blocklen;
+	unsigned int blockstart;
+	int caddr;
+	unsigned char outbuf[65536];
+
+	blocklen = 0;
+	for (cl = as -> line_head; cl; cl = cl -> next)
+	{
+		chunklen = cl -> outputl;
+		if (chunklen < 0)
+			continue;
+		caddr = lw_expr_intval(cl -> addr);
+		if (blocklen == 0) {
+			// Starting a new contiguous block
+			blockstart = caddr;
+			blocklen = chunklen;
+			for (i = 0; i < chunklen; i++)
+				outbuf[i] = cl->output[i];
+		}
+		else
+		{
+			// Continuing a contiguous block?
+			if (blockstart + blocklen == caddr) {
+				// Yes - add the contents to the buffer
+				for (i = 0; i < chunklen; i++)
+					outbuf[blocklen + i] = cl->output[i];
+				blocklen += chunklen;
+			}
+			else
+			{
+				// No - Write out what we have and start a new block
+				write_flex_block(outbuf, blockstart, blocklen, of);
+				blockstart = caddr;
+				blocklen = chunklen;
+				for (i = 0; i < chunklen; i++)
+					outbuf[i] = cl->output[i];
+			}
+		}
+	}
+	if (blocklen > 0)
+		// No more content to add, so flush the buffer if non-empty
+		write_flex_block(outbuf, blockstart, blocklen, of);
+
+	/* The FLEX transfer address record consists of:
+	   A byte containing $16
+	   A word containing the address of the first instruction to be executed
+           FIXME: MarkM - this record may be left out. How can I tell the
+			 difference between an actual load address of 0x0000
+			 and an uninitialised execaddr below?
+	*/
+	outbuf[0] = 0x16;
+	outbuf[1] = (as -> execaddr >> 8) & 0xFF;
+	outbuf[2] = (as -> execaddr) & 0xFF;
+	writebytes(outbuf, 3, 1, of);
 }
 
 int fetch_output_byte(line_t *cl, char *value, int *addr)

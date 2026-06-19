@@ -33,6 +33,7 @@ Contains the main defs used by the linker
 #define OUTPUT_SREC		4	// motorola SREC format
 #define OUTPUT_RAW2     5   // raw sequence of bytes, BSS converted to NULs
 #define OUTPUT_IHEX     6   // IHEX output format
+#define OUTPUT_FLEX     7   // FLEX output format
 
 typedef struct symtab_s symtab_t;
 struct symtab_s

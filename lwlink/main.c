@@ -73,6 +73,11 @@ static int parse_opts(int key, char *arg, void *state)
 		outformat = OUTPUT_DECB;
 		break;
 	
+	case 'F':
+		// flex output
+		outformat = OUTPUT_FLEX;
+		break;
+	
 	case 'r':
 		// raw binary output
 		outformat = OUTPUT_RAW;
@@ -88,6 +93,8 @@ static int parse_opts(int key, char *arg, void *state)
 			outformat = OUTPUT_RAW2;
 		else if (!strcasecmp(arg, "lwex0") || !strcasecmp(arg, "lwex"))
 			outformat = OUTPUT_LWEX0;
+		else if (!strcasecmp(arg, "flex"))
+			outformat = OUTPUT_FLEX;
 		else if (!strcasecmp(arg, "os9"))
 			outformat = OUTPUT_OS9;
 		else if (!strcasecmp(arg, "srec"))
@@ -143,9 +150,11 @@ static struct lw_cmdline_options options[] =
 	{ "debug",		'd',	0,		0,
 				"Set debug mode"},
 	{ "format",		'f',	"TYPE",	0,
-				"Select output format: decb, raw, lwex, os9, srec, ihex"},
+				"Select output format: decb, raw, lwex, flex, os9, srec, ihex"},
 	{ "decb",		'b',	0,		0,
 				"Generate DECB .bin format output, equivalent of --format=decb"},
+	{ "flex",		'F',	0,		0,
+				"Generate TSC FLEX format output, equivalent of --format=flex"},
 	{ "raw",		'r',	0,		0,
 				"Generate raw binary format output, equivalent of --format=raw"},
 	{ "script",		's',	"FILE",		0,
@@ -161,7 +170,7 @@ static struct lw_cmdline_options options[] =
 	{ "sysroot", 0x101,	"DIR",	0,
 				"Specify the path to replace an initial = with in library paths" },
 	{ "map",		'm',	"FILE",		0,
-				"Output informaiton about the link" },
+				"Output information about the link" },
 	{ 0 }
 };
 
