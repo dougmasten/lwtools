@@ -695,6 +695,7 @@ instab_t instab[] =
 	{ "includestr", {   -1,     -1,     -1,     -1},    pseudo_parse_includestr,pseudo_resolve_includestr,      pseudo_emit_includestr,     lwasm_insn_normal},
 	{ "include",	{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_include,	pseudo_resolve_include,			pseudo_emit_include,		lwasm_insn_normal},
 	{ "incl",		{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_include,	pseudo_resolve_include,			pseudo_emit_include,		lwasm_insn_normal},
+	{ "lib",		{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_include,	pseudo_resolve_include,			pseudo_emit_include,		lwasm_insn_normal},
 	{ "use",		{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_include,	pseudo_resolve_include,			pseudo_emit_include,		lwasm_insn_normal},
 	
 	{ "align", 		{	-1, 	-1, 	-1, 	-1 },	pseudo_parse_align,		pseudo_resolve_align,			pseudo_emit_align,			lwasm_insn_normal},
