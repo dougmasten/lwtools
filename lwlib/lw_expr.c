@@ -1305,8 +1305,12 @@ eval_next:
 		return term2;
 	}
 	
-	// unary ^ or ~ (complement, prec 200)
-	if (**p == '^' || **p == '~')
+	// unary ^, ~, or ! (complement, prec 200). The TSC 6809 assembler uses
+	// `!` as the bitwise-complement prefix (e.g. `&!511` to align). lwasm's
+	// binary `!` (a synonym for OR) is only matched in infix position, so the
+	// two uses don't conflict -- exactly as `^` is both unary complement and
+	// binary XOR. Guard `!=` so the not-equal operator is never mis-consumed.
+	if (**p == '^' || **p == '~' || (**p == '!' && (*p)[1] != '='))
 	{
 		(*p)++;
 		term = lw_expr_parse_expr(p, priv, 200);
