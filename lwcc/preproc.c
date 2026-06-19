@@ -1406,14 +1406,14 @@ static int expand_macro(struct preproc_info *pp, char *mname)
 	}
 	else if (strcmp(mname, "__DATE__") == 0)
 	{
-		char dbuf[14];
+		char dbuf[20];
 		struct tm *tv;
 		time_t tm;
 		static char *months[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 		
 		tm = time(NULL);
 		tv = localtime(&tm);
-		snprintf(dbuf, 14, "\"%s %2d %04d\"", months[tv -> tm_mon], tv -> tm_mday, tv -> tm_year + 1900);
+		snprintf(dbuf, 20, "\"%s %2d %04d\"", months[tv -> tm_mon], tv -> tm_mday, tv -> tm_year + 1900);
 		preproc_unget_token(pp, token_create(TOK_STR_LIT, dbuf, pp -> lineno, pp -> column, pp -> fn));
 		return 1;
 	}

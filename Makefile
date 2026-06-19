@@ -53,7 +53,7 @@ LDFLAGS += -Llwlib -llw
 # -O2 which seems okay for now. Ideally identifying what breaks at
 # -O3 is indicated, but so far, identifying the specific source of
 # the breakage has been problematic.
-CFLAGS ?= -O2 -Wno-char-subscripts -Wno-format-truncation
+CFLAGS ?= -O2 -Wall -Wno-char-subscripts
 
 MAIN_TARGETS := lwasm/lwasm$(PROGSUFFIX) \
 	lwlink/lwlink$(PROGSUFFIX) \
@@ -207,6 +207,7 @@ clean: $(cleantargs)
 	@rm -f $(lwasm_objs) $(lwlink_objs) $(lwar_objs) $(lwlib_objs) $(lwobjdump_objs)
 	@rm -f $(extra_clean)
 	@rm -f */*.exe
+	@rm -f test/a.out
 
 .PHONY: realclean
 realclean: clean $(realcleantargs)
@@ -244,3 +245,6 @@ endif
 test: all test/runtests
 	@test/runtests
 
+.PHONY: printvars
+printvars:
+	@$(foreach V,$(sort $(.VARIABLES)), $(if $(filter-out environment% default automatic, $(origin $V)),$(warning $V=$($V) ($(value $V)))))

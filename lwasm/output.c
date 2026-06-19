@@ -319,7 +319,7 @@ void write_code_os9(asmstate_t *as, FILE *of)
 
 void write_code_decb(asmstate_t *as, FILE *of)
 {
-	long preambloc;
+	long preambloc = 0;
 	line_t *cl;
 	int blocklen = -1;
 	int nextcalc = -1;
