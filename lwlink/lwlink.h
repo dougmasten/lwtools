@@ -34,6 +34,7 @@ Contains the main defs used by the linker
 #define OUTPUT_RAW2     5   // raw sequence of bytes, BSS converted to NULs
 #define OUTPUT_IHEX     6   // IHEX output format
 #define OUTPUT_FLEX     7   // FLEX output format
+#define OUTPUT_UNIFLEX  8   // UniFLEX binary executable format
 
 typedef struct symtab_s symtab_t;
 struct symtab_s

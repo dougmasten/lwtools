@@ -41,6 +41,7 @@ void do_output_raw2(FILE *of);
 void do_output_lwex0(FILE *of);
 void do_output_srec(FILE *of);
 void do_output_ihex(FILE *of);
+void do_output_uniflex(FILE *of);
 
 void do_output(void)
 {
@@ -87,7 +88,11 @@ void do_output(void)
 	case OUTPUT_IHEX:
 		do_output_ihex(of);
 		break;
-		
+
+	case OUTPUT_UNIFLEX:
+		do_output_uniflex(of);
+		break;
+
 	default:
 		fprintf(stderr, "Unknown output format doing output!\n");
 		exit(111);
@@ -555,4 +560,104 @@ void do_output_os9(FILE *of)
 	crc[1] ^= 0xff;
 	crc[2] ^= 0xff;
 	writebytes(crc, 1, 3, of);
+}
+
+/*
+UniFLEX binary executable format.
+
+The UniFLEX binary header is 24 bytes:
+  Offset  Size  Field   Description
+  0       1     bhhdr   Header byte ($02 = binary)
+  1       1     bhdes   Descriptor (bit0=RO text, bit1=absolute, bit2=no new mem)
+  2       2     bhtxt   Text segment size
+  4       2     bhdat   Initialized data size
+  6       2     bhbss   BSS (uninitialized data) size
+  8       2     bhrls   Relocation info size (0 for absolute)
+  10      2     bhxfr   Transfer (entry) address
+  12      2     bhstk   Stack size
+  14      2     bhsym   Symbol table size (0)
+  16      2     bhcom   Comments size (0)
+  18      4     bhspr   Spare bytes (0)
+  22      2     bhsrn   Serial number (0)
+
+Sections named "text" or starting with "code" go into the text segment.
+Sections named "data" or "rwdata" go into the data segment.
+BSS-flagged sections go into the BSS segment.
+Everything else goes into text.
+
+The file layout after the header is: text bytes, then data bytes.
+BSS is not stored in the file.
+*/
+void do_output_uniflex(FILE *of)
+{
+	int sn;
+	int textsize = 0;
+	int datasize = 0;
+	int bsssize = 0;
+	unsigned char buf[24];
+
+	// calculate segment sizes
+	for (sn = 0; sn < nsects; sn++)
+	{
+		if (sectlist[sn].ptr -> flags & SECTION_BSS)
+		{
+			bsssize += sectlist[sn].ptr -> codesize;
+			continue;
+		}
+		if (sectlist[sn].ptr -> name &&
+		    (!strcasecmp((char *)sectlist[sn].ptr -> name, "data") ||
+		     !strcasecmp((char *)sectlist[sn].ptr -> name, "rwdata")))
+		{
+			datasize += sectlist[sn].ptr -> codesize;
+		}
+		else
+		{
+			textsize += sectlist[sn].ptr -> codesize;
+		}
+	}
+
+	// build the 24-byte binary header
+	memset(buf, 0, 24);
+	buf[0] = 0x02;		// bhhdr: binary header marker
+	buf[1] = 0x00;		// bhdes: descriptor (0 = normal)
+	buf[2] = (textsize >> 8) & 0xff;	// bhtxt high
+	buf[3] = textsize & 0xff;			// bhtxt low
+	buf[4] = (datasize >> 8) & 0xff;	// bhdat high
+	buf[5] = datasize & 0xff;			// bhdat low
+	buf[6] = (bsssize >> 8) & 0xff;		// bhbss high
+	buf[7] = bsssize & 0xff;			// bhbss low
+	buf[8] = 0x00;		// bhrls high (no relocation for now)
+	buf[9] = 0x00;		// bhrls low
+	buf[10] = (linkscript.execaddr >> 8) & 0xff;	// bhxfr high
+	buf[11] = linkscript.execaddr & 0xff;			// bhxfr low
+	buf[12] = (linkscript.stacksize >> 8) & 0xff;	// bhstk high
+	buf[13] = linkscript.stacksize & 0xff;			// bhstk low
+	// bytes 14-23: sym, com, spare, serial = all zero
+
+	writebytes(buf, 1, 24, of);
+
+	// output text sections
+	for (sn = 0; sn < nsects; sn++)
+	{
+		if (sectlist[sn].ptr -> flags & SECTION_BSS)
+			continue;
+		if (sectlist[sn].ptr -> name &&
+		    (!strcasecmp((char *)sectlist[sn].ptr -> name, "data") ||
+		     !strcasecmp((char *)sectlist[sn].ptr -> name, "rwdata")))
+			continue;
+		writebytes(sectlist[sn].ptr -> code, 1, sectlist[sn].ptr -> codesize, of);
+	}
+
+	// output data sections
+	for (sn = 0; sn < nsects; sn++)
+	{
+		if (sectlist[sn].ptr -> flags & SECTION_BSS)
+			continue;
+		if (sectlist[sn].ptr -> name &&
+		    (!strcasecmp((char *)sectlist[sn].ptr -> name, "data") ||
+		     !strcasecmp((char *)sectlist[sn].ptr -> name, "rwdata")))
+		{
+			writebytes(sectlist[sn].ptr -> code, 1, sectlist[sn].ptr -> codesize, of);
+		}
+	}
 }

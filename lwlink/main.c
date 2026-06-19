@@ -101,6 +101,8 @@ static int parse_opts(int key, char *arg, void *state)
 			outformat = OUTPUT_SREC;
 		else if (!strcasecmp(arg, "ihex"))
 			outformat = OUTPUT_IHEX;
+		else if (!strcasecmp(arg, "uniflex"))
+			outformat = OUTPUT_UNIFLEX;
 		else
 		{
 			fprintf(stderr, "Invalid output format: %s\n", arg);
@@ -150,7 +152,7 @@ static struct lw_cmdline_options options[] =
 	{ "debug",		'd',	0,		0,
 				"Set debug mode"},
 	{ "format",		'f',	"TYPE",	0,
-				"Select output format: decb, raw, lwex, flex, os9, srec, ihex"},
+				"Select output format: decb, raw, lwex, flex, os9, srec, ihex, uniflex"},
 	{ "decb",		'b',	0,		0,
 				"Generate DECB .bin format output, equivalent of --format=decb"},
 	{ "flex",		'F',	0,		0,
