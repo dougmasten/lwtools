@@ -71,7 +71,7 @@ static struct lw_cmdline_options options[] =
 	{ "6800compat",	0x200,	0,			0,							"Enable 6800 compatibility instructions, equivalent to --pragma=6800compat" },
 	{ "no-output",  0x105,  0,          0,                          "Inhibit creation of output file" },
 	{ "no-warn",    0x109,  "FLAG",     0,                          "Suppress warnings of the specified type" },
-	{ "error-format", 0x10a, "STYLE",   0,                          "Error output style: lwasm (default), gcc, vs" },
+	{ "error-format", 0x10b, "STYLE",   0,                          "Error output style: lwasm (default), gcc, vs" },
 	{ 0 }
 };
 
@@ -183,7 +183,7 @@ static int parse_opts(int key, char *arg, void *state)
 		as -> listnofile = 1;
 		break;
 
-	case 0x10a:
+	case 0x10b:
 		if (!strcmp(arg, "lwasm"))
 			as -> error_format = ERROR_FORMAT_LWASM;
 		else if (!strcmp(arg, "gcc"))
