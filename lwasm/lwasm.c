@@ -30,6 +30,14 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 #include <lw_error.h>
 
 #include "lwasm.h"
+
+#ifdef _WIN32
+#include <direct.h>
+#define lw_getcwd _getcwd
+#else
+#include <unistd.h>
+#define lw_getcwd getcwd
+#endif
 #include "instab.h"
 
 void lwasm_skip_to_next_token(line_t *cl, char **p)
@@ -1262,6 +1270,21 @@ int lwasm_lookupreg3(const char *regs, char **p)
 	return rval;
 }
 
+/* vs-mode diagnostics carry a full path so the IDE can open the file no
+   matter where the project file lives relative to the build directory.
+   Returns a static buffer; the caller prints it immediately. */
+static const char *lwasm_vs_path(const char *s)
+{
+	static char buf[2048];
+	if (s[0] == '/' || s[0] == '\\' || (s[0] && s[1] == ':'))
+		return s;
+	if (!lw_getcwd(buf, sizeof(buf) - strlen(s) - 2))
+		return s;
+	strcat(buf, "/");
+	strcat(buf, s);
+	return buf;
+}
+
 void lwasm_show_errors(asmstate_t *as)
 {
 	line_t *cl;
@@ -1279,11 +1302,38 @@ void lwasm_show_errors(asmstate_t *as)
 
 		for (e = cl -> err; e; e = e -> next)
 		{
-			fprintf(stderr, "%s(%d) : ERROR : %s\n", s, cl->lineno, e->mess);
+			switch (as -> error_format)
+			{
+			case ERROR_FORMAT_GCC:
+				fprintf(stderr, "%s:%d: error: %s\n", s, cl->lineno, e->mess);
+				break;
+			case ERROR_FORMAT_VS:
+				// MSVC parser wants a code after the category; without one
+				// the IDE re-logs the diagnostic as "error :" (spaced).
+				// Full path, cl.exe /FC style: the IDE resolves relative
+				// paths against the project directory, which for an NMake
+				// project need not be the build directory.
+				fprintf(stderr, "%s(%d): error LW%04d: %s\n", lwasm_vs_path(s), cl->lineno, (int)(e->code), e->mess);
+				break;
+			default:
+				fprintf(stderr, "%s(%d) : ERROR : %s\n", s, cl->lineno, e->mess);
+				break;
+			}
 		}
 		for (e = cl -> warn; e; e = e -> next)
 		{
-			fprintf(stderr, "%s(%d) : WARNING : %s\n", s, cl->lineno, e->mess);
+			switch (as -> error_format)
+			{
+			case ERROR_FORMAT_GCC:
+				fprintf(stderr, "%s:%d: warning: %s\n", s, cl->lineno, e->mess);
+				break;
+			case ERROR_FORMAT_VS:
+				fprintf(stderr, "%s(%d): warning LW%04d: %s\n", lwasm_vs_path(s), cl->lineno, (int)(e->code), e->mess);
+				break;
+			default:
+				fprintf(stderr, "%s(%d) : WARNING : %s\n", s, cl->lineno, e->mess);
+				break;
+			}
 		}
 		fprintf(stderr, "%s:%05d %s\n\n", cl -> linespec, cl -> lineno, cl -> ltext);
 	}

@@ -392,9 +392,17 @@ struct structtab_s
 	line_t *definedat;					// line where structure is defined
 };
 
+enum
+{
+	ERROR_FORMAT_LWASM = 0,				// file(line) : ERROR : message (default)
+	ERROR_FORMAT_GCC,					// file:line: error: message
+	ERROR_FORMAT_VS						// file(line): error: message
+};
+
 struct asmstate_s
 {
 	int output_format;					// output format
+	int error_format;					// diagnostic format (ERROR_FORMAT_*)
 	int debug_level;					// level of debugging requested
 	FILE *debug_file;					// FILE * to output debug messages to
 	int flags;							// assembly flags
