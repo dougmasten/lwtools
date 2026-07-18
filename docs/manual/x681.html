@@ -17,7 +17,7 @@ TITLE="Object Files and Sections"
 HREF="x617.html"><LINK
 REL="NEXT"
 TITLE="Convenience Instructions"
-HREF="x832.html"></HEAD
+HREF="x856.html"></HEAD
 ><BODY
 CLASS="SECTION"
 BGCOLOR="#FFFFFF"
@@ -59,7 +59,7 @@ WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="x832.html"
+HREF="x856.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -198,7 +198,7 @@ to display 6309 timings.</P
 >These pragmas enable convenience instructions extending the 6809 and 6309
 instruction sets respectively. For more information, see 
 <A
-HREF="x832.html"
+HREF="x856.html"
 >Section 3.11</A
 >.</P
 ></DD
@@ -444,6 +444,79 @@ CLASS="PROGRAMLISTING"
 1D24 BD1D65            JSR   INV</PRE
 ></DD
 ><DT
+>asm09</DT
+><DD
+><P
+>&#13;This pragma enables a small set of Motorola ASM09 compatibility features
+that are off by default.  It was added to allow direct assembly of vintage
+Motorola sources (notably the MC6839 floating-point ROM) without modifying
+them.</P
+><P
+>&#13;When asm09 is in effect:</P
+><P
+></P
+><UL
+><LI
+><P
+>The string-comparison conditionals <TT
+CLASS="LITERAL"
+>IFC</TT
+> and
+<TT
+CLASS="LITERAL"
+>IFNC</TT
+> are recognised. <TT
+CLASS="LITERAL"
+>IFC s1,s2</TT
+>
+assembles the following block if the two comma-separated strings are equal;
+<TT
+CLASS="LITERAL"
+>IFNC</TT
+> assembles if they differ.</P
+></LI
+><LI
+><P
+>The <TT
+CLASS="LITERAL"
+>EXIT</TT
+> and <TT
+CLASS="LITERAL"
+>EXITM</TT
+>
+directives terminate the current macro expansion early; any remaining lines
+of the macro body are skipped.</P
+></LI
+><LI
+><P
+>Macro argument parsing treats commas inside matched
+parentheses as part of a single argument, and strips one layer of outer
+parentheses after parsing.  This allows indexed addressing modes such as
+<TT
+CLASS="LITERAL"
+>(FRACT,X)</TT
+> to be passed to a macro as one argument.</P
+></LI
+></UL
+><P
+>&#13;With the pragma off (the default), <TT
+CLASS="LITERAL"
+>IFC</TT
+>,
+<TT
+CLASS="LITERAL"
+>IFNC</TT
+>, <TT
+CLASS="LITERAL"
+>EXIT</TT
+> and <TT
+CLASS="LITERAL"
+>EXITM</TT
+>
+are not recognised as directives, and macro arguments split on every comma
+regardless of parentheses.</P
+></DD
+><DT
 >m80ext</DT
 ><DD
 ><P
@@ -558,7 +631,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="x832.html"
+HREF="x856.html"
 ACCESSKEY="N"
 >Next</A
 ></TD

@@ -205,43 +205,43 @@ HREF="#CONVINST"
 ></DT
 ><DT
 >3.12. <A
-HREF="#AEN837"
+HREF="#AEN861"
 >Cycle Counts</A
 ></DT
 ></DL
 ></DD
 ><DT
 >4. <A
-HREF="#AEN843"
+HREF="#AEN867"
 >LWLINK</A
 ></DT
 ><DD
 ><DL
 ><DT
 >4.1. <A
-HREF="#AEN846"
+HREF="#AEN870"
 >Command Line Options</A
 ></DT
 ><DT
 >4.2. <A
-HREF="#AEN943"
+HREF="#AEN967"
 >Linker Operation</A
 ></DT
 ><DT
 >4.3. <A
-HREF="#AEN957"
+HREF="#AEN981"
 >Linking Scripts</A
 ></DT
 ><DT
 >4.4. <A
-HREF="#AEN1024"
+HREF="#AEN1048"
 >Format Specific Linking Notes</A
 ></DT
 ><DD
 ><DL
 ><DT
 >4.4.1. <A
-HREF="#AEN1027"
+HREF="#AEN1051"
 >OS9 Modules</A
 ></DT
 ></DL
@@ -250,14 +250,14 @@ HREF="#AEN1027"
 ></DD
 ><DT
 >5. <A
-HREF="#AEN1039"
+HREF="#AEN1063"
 >Libraries and LWAR</A
 ></DT
 ><DD
 ><DL
 ><DT
 >5.1. <A
-HREF="#AEN1043"
+HREF="#AEN1067"
 >Command Line Options</A
 ></DT
 ></DL
@@ -279,12 +279,12 @@ CLASS="LOT"
 ></DT
 ><DT
 >6-1. <A
-HREF="#AEN1126"
+HREF="#AEN1150"
 >Object File Term Types</A
 ></DT
 ><DT
 >6-2. <A
-HREF="#AEN1156"
+HREF="#AEN1180"
 >Object File Operator Numbers</A
 ></DT
 ></DL
@@ -2627,6 +2627,79 @@ CLASS="PROGRAMLISTING"
 1D24 BD1D65            JSR   INV</PRE
 ></DD
 ><DT
+>asm09</DT
+><DD
+><P
+>&#13;This pragma enables a small set of Motorola ASM09 compatibility features
+that are off by default.  It was added to allow direct assembly of vintage
+Motorola sources (notably the MC6839 floating-point ROM) without modifying
+them.</P
+><P
+>&#13;When asm09 is in effect:</P
+><P
+></P
+><UL
+><LI
+><P
+>The string-comparison conditionals <TT
+CLASS="LITERAL"
+>IFC</TT
+> and
+<TT
+CLASS="LITERAL"
+>IFNC</TT
+> are recognised. <TT
+CLASS="LITERAL"
+>IFC s1,s2</TT
+>
+assembles the following block if the two comma-separated strings are equal;
+<TT
+CLASS="LITERAL"
+>IFNC</TT
+> assembles if they differ.</P
+></LI
+><LI
+><P
+>The <TT
+CLASS="LITERAL"
+>EXIT</TT
+> and <TT
+CLASS="LITERAL"
+>EXITM</TT
+>
+directives terminate the current macro expansion early; any remaining lines
+of the macro body are skipped.</P
+></LI
+><LI
+><P
+>Macro argument parsing treats commas inside matched
+parentheses as part of a single argument, and strips one layer of outer
+parentheses after parsing.  This allows indexed addressing modes such as
+<TT
+CLASS="LITERAL"
+>(FRACT,X)</TT
+> to be passed to a macro as one argument.</P
+></LI
+></UL
+><P
+>&#13;With the pragma off (the default), <TT
+CLASS="LITERAL"
+>IFC</TT
+>,
+<TT
+CLASS="LITERAL"
+>IFNC</TT
+>, <TT
+CLASS="LITERAL"
+>EXIT</TT
+> and <TT
+CLASS="LITERAL"
+>EXITM</TT
+>
+are not recognised as directives, and macro arguments split on every comma
+regardless of parentheses.</P
+></DD
+><DT
 >m80ext</DT
 ><DD
 ><P
@@ -2737,7 +2810,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN837"
+NAME="AEN861"
 >3.12. Cycle Counts</A
 ></H2
 ><P
@@ -2776,7 +2849,7 @@ CLASS="PROGRAMLISTING"
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN843"
+NAME="AEN867"
 ></A
 >Chapter 4. LWLINK</H1
 ><P
@@ -2787,7 +2860,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN846"
+NAME="AEN870"
 >4.1. Command Line Options</A
 ></H2
 ><P
@@ -2985,7 +3058,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN943"
+NAME="AEN967"
 >4.2. Linker Operation</A
 ></H2
 ><P
@@ -3041,7 +3114,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN957"
+NAME="AEN981"
 >4.3. Linking Scripts</A
 ></H2
 ><P
@@ -3248,7 +3321,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN1024"
+NAME="AEN1048"
 >4.4. Format Specific Linking Notes</A
 ></H2
 ><P
@@ -3261,7 +3334,7 @@ CLASS="SECTION"
 ><HR><H3
 CLASS="SECTION"
 ><A
-NAME="AEN1027"
+NAME="AEN1051"
 >4.4.1. OS9 Modules</A
 ></H3
 ><P
@@ -3337,7 +3410,7 @@ offset from U technique.</P
 CLASS="CHAPTER"
 ><HR><H1
 ><A
-NAME="AEN1039"
+NAME="AEN1063"
 ></A
 >Chapter 5. Libraries and LWAR</H1
 ><P
@@ -3356,7 +3429,7 @@ CLASS="SECTION"
 ><HR><H2
 CLASS="SECTION"
 ><A
-NAME="AEN1043"
+NAME="AEN1067"
 >5.1. Command Line Options</A
 ></H2
 ><P
@@ -3557,7 +3630,7 @@ by a NULL expression (only an end of expression term).</P
 ><DIV
 CLASS="TABLE"
 ><A
-NAME="AEN1126"
+NAME="AEN1150"
 ></A
 ><P
 ><B
@@ -3629,7 +3702,7 @@ exported symbols or external references.</P
 ><DIV
 CLASS="TABLE"
 ><A
-NAME="AEN1156"
+NAME="AEN1180"
 ></A
 ><P
 ><B
