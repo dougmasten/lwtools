@@ -1459,7 +1459,7 @@ static int expand_macro(struct preproc_info *pp, char *mname)
 		if (t -> ttype != TOK_WSPACE && t -> ttype != TOK_EOL)
 			break;
 		t -> next = t2;
-		t2 = t2;
+		t2 = t;
 	}
 	if (t -> ttype != TOK_OPAREN)
 	{
