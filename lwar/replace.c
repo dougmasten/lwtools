@@ -60,6 +60,7 @@ void do_replace(void)
 			}
 		}
 		perror("Cannot open archive file");
+		exit(1);
 	}
 	
 	(void)(fread(buf, 1, 6, f) && 1);
@@ -185,7 +186,7 @@ doadd:
 				{
 					fputc(c, nf);
 					c = fgetc(f2);
-					if (c == EOF || ferror(f))
+					if (c == EOF || ferror(f2))
 					{
 						fprintf(stderr, "Bad input archive file\n");
 						exit(1);
