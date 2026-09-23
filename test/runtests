@@ -46,7 +46,7 @@ while ($fe = readdir DH)
 		elsif ($ts eq 'FAIL')
 		{
 			$testsfailed += 1;
-			$testresults{$fe}{'..failed'} =+ 1;
+			$testresults{$fe}{'..failed'} += 1;
 		}
 		elsif ($ts eq 'SKIP')
 		{
