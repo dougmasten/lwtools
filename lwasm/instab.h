@@ -51,6 +51,8 @@ enum
 	lwasm_insn_isemuext		= 1 << 10,	/* insn is an emulator extension */
 	lwasm_insn_org                  = 1 << 11,      /* insn sets assembly address */
 	lwasm_insn_isasm09		= 1 << 12,	/* insn is a Motorola ASM09 extension */
+	lwasm_insn_repeat  		= 1 << 13,	/* start of a repeat block */
+	lwasm_insn_endrepeat	= 1 << 14,	/* end of a repeat block */
 	lwasm_insn_normal		= 0
 };
 

@@ -120,6 +120,21 @@ PARSEFUNC(pseudo_parse_endm);
 #define pseudo_resolve_endm NULL
 #define pseudo_emit_endm NULL
 
+// REPEAT pseudo op
+PARSEFUNC(pseudo_parse_repeat);
+#define pseudo_resolve_repeat NULL
+#define pseudo_emit_repeat NULL
+
+// ENDREPEAT pseudo op
+PARSEFUNC(pseudo_parse_endrepeat);
+#define pseudo_resolve_endrepeat NULL
+#define pseudo_emit_endrepeat NULL
+
+// IRP pseudo op
+PARSEFUNC(pseudo_parse_irp);
+#define pseudo_resolve_irp NULL
+#define pseudo_emit_irp NULL
+
 #define pseudo_parse_noop NULL
 #define pseudo_resolve_noop NULL
 #define pseudo_emit_noop NULL
@@ -747,6 +762,10 @@ instab_t instab[] =
 	{ "macro",		{	-1, 	-1, 	-1, 	-1}, 	pseudo_parse_macro,		pseudo_resolve_macro,			pseudo_emit_macro,			lwasm_insn_cond | lwasm_insn_setsym},
 	{ "macr",		{	-1, 	-1, 	-1, 	-1}, 	pseudo_parse_macro,		pseudo_resolve_macro,			pseudo_emit_macro,			lwasm_insn_cond | lwasm_insn_setsym},
 	{ "endm",		{	-1, 	-1, 	-1, 	-1},	pseudo_parse_endm,		pseudo_resolve_endm,			pseudo_emit_endm,			lwasm_insn_cond | lwasm_insn_setsym | lwasm_insn_endm},
+
+	{ "rept",		{	-1, 	-1, 	-1, 	-1},	pseudo_parse_repeat,	pseudo_resolve_repeat,			pseudo_emit_repeat,			lwasm_insn_cond | lwasm_insn_repeat},
+	{ "irp",		{	-1, 	-1, 	-1, 	-1},	pseudo_parse_irp,		pseudo_resolve_irp,				pseudo_emit_irp,			lwasm_insn_cond | lwasm_insn_repeat},
+	{ "endr",		{	-1, 	-1, 	-1, 	-1},	pseudo_parse_endrepeat,	pseudo_resolve_endrepeat,		pseudo_emit_endrepeat,		lwasm_insn_cond | lwasm_insn_endrepeat},
 
 	{ "setdp", 		{	-1, 	-1, 	-1, 	-1},	pseudo_parse_setdp,		pseudo_resolve_setdp,			pseudo_emit_setdp,			lwasm_insn_normal},
 	{ "setstr",     {   -1,     -1,     -1,     -1},    pseudo_parse_setstr,    pseudo_resolve_setstr,          pseudo_emit_setstr,         lwasm_insn_normal},

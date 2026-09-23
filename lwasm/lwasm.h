@@ -223,6 +223,11 @@ typedef enum
 	E_INCLUDEBIN_ILL_LENGTH     = 61,
 	E_NESTED_PHASE              = 62,
 	E_MISSING_PHASE             = 63,
+	E_REPEAT_ENDREPEAT          = 64,
+	E_REPEAT_NOEND              = 65,
+	E_REPEAT_COUNT              = 66,
+	E_IRP_NOARGS                = 67,
+	E_IRP_BADPARAM              = 68,
 
 	/* warnings must be 1000 or greater */
 
@@ -411,6 +416,14 @@ struct asmstate_s
 	int warningcount;					// number of warnings issued
 	int testmode_errorcount;			// number of errors in testmode
 	int inmacro;						// are we in a macro?
+	int inrepeat;						// nesting depth while capturing a REPEAT block (0 = not capturing)
+	int repeatcount;					// repeat count of the block being captured
+	char **repeatlines;					// captured lines of the REPEAT block
+	int repeatnumlines;					// number of captured lines
+	int inirp;							// is the block currently being captured an IRP (vs a fixed-count REPEAT)?
+	char *irpparam;						// substitution parameter name for an IRP block
+	char **irpargs;						// substitution values for an IRP block
+	int irpnumargs;						// number of irpargs values (also the repeat count)
 	int instruct;						// are w in a structure?
 	int skipcond;						// skipping a condition?
 	int skipcount;						// depth of "skipping"

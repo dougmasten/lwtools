@@ -307,6 +307,11 @@ const char* lwasm_lookup_error(lwasm_errorcode_t error_code)
 		case E_INCLUDEBIN_ILL_LENGTH:	return "Length value out of range";
 		case E_NESTED_PHASE:            return "Nested PHASE not supported";
 		case E_MISSING_PHASE:            return "DEPHASE without PHASE";
+		case E_REPEAT_ENDREPEAT:		return "ENDR without REPT/IRP";
+		case E_REPEAT_NOEND:			return "REPT/IRP without ENDR";
+		case E_REPEAT_COUNT:			return "Invalid REPT count";
+		case E_IRP_NOARGS:				return "IRP requires at least one value";
+		case E_IRP_BADPARAM:			return "Invalid IRP parameter name";
 
 		case W_ENDSTRUCT_WITHOUT:		return "ENDSTRUCT without STRUCT";
 		case W_DUPLICATE_SECTION:		return "Section flags can only be specified the first time; ignoring duplicate definition";

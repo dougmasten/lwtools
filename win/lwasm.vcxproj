@@ -39,6 +39,7 @@
     <ClCompile Include="..\lwasm\pass7.c" />
     <ClCompile Include="..\lwasm\pragma.c" />
     <ClCompile Include="..\lwasm\pseudo.c" />
+    <ClCompile Include="..\lwasm\repeat.c" />
     <ClCompile Include="..\lwasm\section.c" />
     <ClCompile Include="..\lwasm\strings.c" />
     <ClCompile Include="..\lwasm\struct.c" />

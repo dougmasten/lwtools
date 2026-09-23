@@ -1360,6 +1360,94 @@ causes the assembler to resume interpreting source lines as normal.
 </section>
 
 <section>
+<title>Repeat Blocks</title>
+<para>
+REPT and IRP provide ways to repeat a block of source lines without writing
+a full macro for it. Unlike a macro, a repeat block does not need a name and
+is expanded in place, immediately, rather than being invoked separately
+elsewhere in the source.
+</para>
+
+<para>
+Repeat blocks may be nested inside each other, inside a macro definition, or
+wrapped around a macro invocation. Each repetition of the block gets its own
+local symbol context, just like a macro expansion, so local symbols used
+inside a repeat block do not collide between repetitions.
+</para>
+
+<para>
+Repeat blocks are only processed during the first pass. The block is
+expanded as soon as the terminating ENDR is encountered; on later passes,
+the expanded copies are simply reassembled as ordinary source lines.
+</para>
+
+<variablelist>
+<varlistentry>
+<term>REPT <parameter>count</parameter></term>
+<listitem>
+<para>
+Begins a block of source lines that will be repeated
+<parameter>count</parameter> times, where <parameter>count</parameter> is a
+constant expression evaluating to a non-negative integer. If
+<parameter>count</parameter> is 0, the block is parsed but no copies of it
+are assembled. The block is terminated with ENDR.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>IRP <parameter>param</parameter>,<parameter>value</parameter>[,<parameter>value</parameter>...]</term>
+<listitem>
+<para>
+Begins a block of source lines that will be repeated once for each
+<parameter>value</parameter> in the comma separated list following
+<parameter>param</parameter>. At least one <parameter>value</parameter> must
+be given. <parameter>param</parameter> is a name for the loop variable; it
+must start with a letter, underscore, or period, and continue with letters,
+digits, underscores, or periods, the same as an ordinary symbol name. The
+block is terminated with ENDR.
+</para>
+
+<para>
+Within the block, <parameter>\param</parameter> or
+<parameter>\{param}</parameter> is replaced, verbatim, with the value for
+the current repetition, wherever it appears on a source line -- including in
+a comment or as part of a symbol name, just as with macro parameters. The
+braced form is needed whenever the reference is immediately followed by a
+character that could otherwise be read as part of the name, such as another
+letter or digit.
+</para>
+
+<para>
+A <parameter>value</parameter> may be enclosed in single or double quotes in
+order to include whitespace or a comma in it; the quotes are stripped before
+substitution.
+</para>
+
+<para>
+Because substitution is a single textual pass over the whole captured block,
+an IRP nested inside another IRP must use a different
+<parameter>param</parameter> name than any IRP it is nested within;
+otherwise the inner references would be replaced by the outer value before
+the inner IRP ever runs.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>ENDR</term>
+<listitem>
+<para>
+Ends a REPT or IRP block and causes the block to be expanded the
+appropriate number of times.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+<section>
 <title>Structures</title>
 <para>
 

@@ -34,6 +34,7 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 int expand_macro(asmstate_t *as, line_t *l, char **p, char *opc);
 int expand_struct(asmstate_t *as, line_t *l, char **p, char *opc);
 int add_macro_line(asmstate_t *as, char *optr);
+int add_repeat_line(asmstate_t *as, char *optr);
 
 /*
 pass 1: parse the lines
@@ -68,7 +69,8 @@ void do_pass1(asmstate_t *as)
 	int lc = 1;
 	int nomacro;
 	int wasmacro;
-	
+	int wasrepeat;
+
 	for (;;)
 	{
 		nomacro = 0;
@@ -77,7 +79,11 @@ void do_pass1(asmstate_t *as)
 		sym = NULL;
 		line = input_readline(as);
 		if (!line)
+		{
+			if (as -> inrepeat && as -> line_tail)
+				lwasm_register_error(as, as -> line_tail, E_REPEAT_NOEND);
 			break;
+		}
 		if (line[0] == 1 && line[1] == 1)
 		{
 			// special internal directive
@@ -111,6 +117,7 @@ void do_pass1(asmstate_t *as)
 		debug_message(as, 75, "Read line: %s", line);
 		
 		wasmacro = as -> inmacro;
+		wasrepeat = as -> inrepeat;
 		cl = lw_alloc(sizeof(line_t));
 		memset(cl, 0, sizeof(line_t));
 		cl -> outputl = -1;
@@ -321,6 +328,29 @@ void do_pass1(asmstate_t *as)
 			
 			// p1 points to the start of the operand
 			
+			// if we're capturing a REPEAT block, everything is recorded
+			// verbatim except the ENDREPEAT that closes the outermost REPEAT;
+			// nested REPEAT/ENDREPEAT pairs are just tracked for depth
+			if (as -> inrepeat && !as -> inmacro)
+			{
+				if (instab[opnum].flags & lwasm_insn_repeat)
+				{
+					as -> inrepeat++;
+					goto linedone;
+				}
+				if (instab[opnum].flags & lwasm_insn_endrepeat)
+				{
+					if (as -> inrepeat > 1)
+					{
+						as -> inrepeat--;
+						goto linedone;
+					}
+					// closing ENDREPEAT falls through to its parse function
+				}
+				else
+					goto linedone;
+			}
+
 			// if we're inside a macro definition and not at ENDM,
 			// add the line to the macro definition and continue
 			if (as -> inmacro && !(instab[opnum].flags & lwasm_insn_endm))
@@ -447,7 +477,9 @@ void do_pass1(asmstate_t *as)
 	linedone:
 		if (as -> inmacro && wasmacro)
 			add_macro_line(as, line);
-		if (!as -> skipcond && !as -> inmacro)
+		if (as -> inrepeat && wasrepeat)
+			add_repeat_line(as, line);
+		if (!as -> skipcond && !as -> inmacro && !wasrepeat)
 		{
 			if (cl -> sym && cl -> symset == 0)
 			{
@@ -475,7 +507,7 @@ void do_pass1(asmstate_t *as)
 		}
 
 nextline:
-		if (as -> skipcond || as -> inmacro || cl -> ltext[0] == 1)
+		if (as -> skipcond || as -> inmacro || as -> inrepeat || wasrepeat || cl -> ltext[0] == 1)
 			cl -> hideline = 1;
 		if (as -> skipcond)
 			cl -> hidecond = 1;
