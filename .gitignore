@@ -1,0 +1,12 @@
+# .gitignore
+
+*.o
+*.d
+*.a
+a.out
+
+lwar/lwar
+lwasm/lwasm
+lwcc/lwcc-cpp
+lwlink/lwlink
+lwlink/lwobjdump
