@@ -1349,8 +1349,7 @@ lw_expr_t lw_expr_parse_expr(char **p, void *priv, int prec)
 		{ lw_expr_oper_or, "||", 25 },
 		
 		{ lw_expr_oper_bwand, "&", 51 }, // and higher than or due to above note
-		{ lw_expr_oper_bwor, "|", 50 },
-		{ lw_expr_oper_bwor, "!", 50 },
+		{ lw_expr_oper_bwor, "|", 50 }, // ! option for bwor is below to avoid shadowing !=
 		{ lw_expr_oper_bwxor, "^", 50 },
 
 		{ lw_expr_oper_bytepaste, "::", 45 },
@@ -1370,6 +1369,9 @@ lw_expr_t lw_expr_parse_expr(char **p, void *priv, int prec)
 		{ lw_expr_oper_le, "<=", 30 },
 		{ lw_expr_oper_gt, ">", 30 },
 		{ lw_expr_oper_ge, ">=", 30 },
+
+		/* down here to avoid breaking the != operator above */
+		{ lw_expr_oper_bwor, "!", 50 },
 		
 		{ lw_expr_oper_none, "", 0 }
 	};
