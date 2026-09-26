@@ -1510,14 +1510,19 @@ again:
 PARSEFUNC(pseudo_parse_error)
 {
 	lwasm_register_error2(as, l, E_USER_SPECIFIED, "%s", *p);
-	skip_operand(p);
+	l -> len = 0;
+	// we're consuming the rest of the line, so actually do so
+	while (**p)
+		(*p)++;
 }
 
 PARSEFUNC(pseudo_parse_warning)
 {
 	lwasm_register_error2(as, l, W_USER_SPECIFIED, "%s", *p);
 	l -> len = 0;
-	skip_operand(p);
+	// we're consuming the rest of the line, so actually do so
+	while (**p)
+		(*p)++;
 }
 
 PARSEFUNC(pseudo_parse_includebin)
